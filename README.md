@@ -21,7 +21,10 @@ The project is organized into the following directories:
 ├── docs/                  # Project documentation, including the technical report and Colab guide.
 ├── scripts/               # Standalone scripts for tasks like fine-tuning, ONNX export, and validation.
 ├── src/                   # Main source code for the project.
-│   └── data_training/     # Scripts related to data generation and preprocessing.
+│   ├── agent_ui/          # Employee-facing personal dashboard (Bottle).
+│   ├── data_training/     # Scripts related to data generation and preprocessing.
+│   ├── management_dashboard/ # Management dashboard (React).
+│   └── server/            # Central FastAPI server.
 ├── tests/                 # Unit tests for the core modules.
 └── validation_results/    # Output directory for validation artifacts (e.g., confusion matrix).
 ```
@@ -53,7 +56,6 @@ The project is organized into the following directories:
     ```bash
     pip install -r requirements.txt
     ```
-    *(Note: A `requirements.txt` file will be generated in a later step. For now, dependencies can be installed manually as needed.)*
 
 
 ## 5. Usage Guide
@@ -104,7 +106,46 @@ python scripts/validate_model.py
 ```
 This will print a classification report and save a confusion matrix plot to the `validation_results/` directory. *(Note: The script currently uses placeholder predictions. To use your actual model, you would need to modify it to load the ONNX model and perform inference.)*
 
-## 6. Testing
+## 6. Running the UI and Server
+
+This project includes a local personal dashboard, a central server, and a management dashboard.
+
+### Personal Dashboard (Agent UI)
+
+This is a lightweight Bottle server that displays the employee-facing dashboard.
+
+1.  **Install bottle:**
+    ```bash
+    pip install bottle
+    ```
+2.  **Run the server:**
+    ```bash
+    python src/agent_ui/main.py
+    ```
+3.  Access the dashboard at `http://localhost:8080`.
+
+### Central Analytics Hub (Server)
+
+This is the main FastAPI server for collecting data.
+
+1.  **Install dependencies:**
+    ```bash
+    pip install -r src/server/requirements.txt
+    ```
+2.  **Run the server:**
+    ```bash
+    uvicorn src.server.main:app --reload --port 8000
+    ```
+3.  The API will be available at `http://localhost:8000`.
+
+### Management Dashboard
+
+This is a simple React application. To view it, you just need to open the `index.html` file in your browser.
+
+1.  Navigate to the `src/management_dashboard` directory.
+2.  Open `index.html` in your web browser.
+
+## 7. Testing
 
 To ensure the integrity of the codebase, you can run the suite of unit tests.
 
