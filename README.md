@@ -23,7 +23,7 @@ The project is organized into the following directories:
 ├── src/                   # Main source code for the project.
 │   ├── agent_ui/          # Employee-facing personal dashboard (Bottle).
 │   ├── data_training/     # Scripts related to data generation and preprocessing.
-│   ├── management_dashboard/ # Management dashboard (React).
+│   ├── management_dashboard_react/ # Management dashboard (React).
 │   └── server/            # Central FastAPI server.
 ├── tests/                 # Unit tests for the core modules.
 └── validation_results/    # Output directory for validation artifacts (e.g., confusion matrix).
@@ -138,12 +138,46 @@ This is the main FastAPI server for collecting data.
     ```
 3.  The API will be available at `http://localhost:8000`.
 
-### Management Dashboard
+### Management Dashboard (React)
 
-This is a simple React application. To view it, you just need to open the `index.html` file in your browser.
+The management dashboard consists of a React frontend and a dedicated FastAPI backend. Both must be running for the dashboard to be fully functional.
 
-1.  Navigate to the `src/management_dashboard` directory.
-2.  Open `index.html` in your web browser.
+**1. Run the Frontend (Vite)**
+
+1.  **Navigate to the dashboard directory:**
+    ```bash
+    cd src/management_dashboard_react
+    ```
+
+2.  **Install Node.js dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+4.  The frontend will be accessible at `http://localhost:5173`.
+
+**2. Run the Backend (FastAPI)**
+
+1.  **Navigate to the dashboard directory** (if not already there):
+    ```bash
+    cd src/management_dashboard_react
+    ```
+
+2.  **Install Python dependencies:**
+    *Ensure your virtual environment is active before running this command.*
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Run the API server:**
+    ```bash
+    python server.py
+    ```
+4.  The API will be available at `http://localhost:8001`.
 
 ## 7. Testing
 

@@ -15,6 +15,7 @@
             <nav>
                 <a href="/">Dashboard</a>
                 <a href="/data-transparency" class="active">Data Transparency</a>
+                <a href="/settings">Settings</a>
             </nav>
         </header>
 
