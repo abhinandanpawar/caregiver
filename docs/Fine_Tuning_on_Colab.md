@@ -1,47 +1,61 @@
-# Fine-Tuning Phi-3-mini for Employee Wellbeing Monitoring on Google Colab
+# Comprehensive Guide to Fine-Tuning Phi-3-mini on Google Colab
 
-This notebook provides a step-by-step guide to fine-tuning the `microsoft/Phi-3-mini-4k-instruct` model on our synthetic employee wellbeing dataset. We will use QLoRA for memory-efficient training, which is ideal for the free-tier Google Colab environment.
+This document provides a detailed, step-by-step guide to fine-tuning the `microsoft/Phi-3-mini-4k-instruct` model using our synthetic employee wellbeing dataset. The process is designed for the free-tier Google Colab environment, leveraging QLoRA for memory-efficient training.
 
-## Step 1: Setup and Environment Configuration
+---
 
-First, we need to configure the Colab runtime to use a GPU.
-1. Go to **Runtime** -> **Change runtime type**.
-2. Select **T4 GPU** from the dropdown menu and click **Save**.
+## Step 1: Environment Configuration
 
-Next, we'll mount your Google Drive to access our project files and save the fine-tuned model.
+Before we begin, we must configure the Colab runtime to use a GPU, as training a large language model on a CPU is not feasible.
+
+1.  In your Colab notebook, navigate to the menu bar and click **Runtime** -> **Change runtime type**.
+2.  From the "Hardware accelerator" dropdown menu, select **T4 GPU**.
+3.  Click **Save**.
+
+## Step 2: Project Setup in Google Drive
+
+To access our project files and save the output, we need to mount your Google Drive and set up the project directory.
+
+#### 1. Mount Google Drive
+Run the following Python code in a Colab cell. This will prompt you to authorize access to your Google Drive.
 
 ```python
 from google.colab import drive
 drive.mount('/content/drive')
 ```
 
-## Step 2: Project Setup and Dependencies
+#### 2. Upload and Navigate to Project Directory
+You need to upload the entire project folder to your Google Drive. For this guide, we will assume you have placed it in `My Drive/Colab Notebooks/employee-wellbeing-ai`.
 
-Before running the script, you need to place your project folder in your Google Drive. Let's assume your project is located at `My Drive/Colab Notebooks/employee-wellbeing-ai`.
-
-Now, let's navigate to the project directory and install the required Python libraries.
+Next, navigate to this directory in your Colab environment using the following magic command:
 
 ```python
 %cd /content/drive/My Drive/Colab Notebooks/employee-wellbeing-ai
+```
 
+## Step 3: Install Dependencies
+
+Now, we will install all the necessary Python libraries for fine-tuning.
+
+```python
+# Install core AI and data handling libraries
 !pip install torch torchvision torchaudio
 !pip install transformers datasets peft trl bitsandbytes accelerate
 ```
 
-## Step 3: Verify Data
+## Step 4: Prepare the Dataset
 
-Ensure your synthetic data is preprocessed. If you haven't done so, run the `preprocess_data.py` script first.
+The model requires the training data to be in a specific format. If you haven't already done so, run the preprocessing script to generate the `train_data.csv` and `val_data.csv` files.
 
 ```python
-# This step is only necessary if you haven't preprocessed the data yet.
+# This step is only necessary if you haven't preprocessed the data yet
+# from your local machine.
 !python src/data_training/preprocess_data.py
 ```
 
-## Step 4: Run the Fine-Tuning Script
+## Step 5: Run the Fine-Tuning Script
 
-Now we are ready to start the fine-tuning process. We will execute the `run_finetuning.py` script with our desired parameters. You can adjust the learning rate, batch size, and number of epochs as needed.
-
-**Note:** The training process may take a significant amount of time, depending on the configuration.
+With the environment set up and the data ready, we can now start the fine-tuning process. The command below executes the main training script.
 
 ```python
 !python scripts/run_finetuning.py \
@@ -56,16 +70,43 @@ Now we are ready to start the fine-tuning process. We will execute the `run_fine
     --save_steps 50
 ```
 
-## Step 5: Troubleshooting
+#### Understanding the Script Arguments:
+*   `--model_id`: The base model we are fine-tuning from the Hugging Face Hub.
+*   `--dataset_path`: The directory where `train_data.csv` and `val_data.csv` are located.
+*   `--output_dir`: The directory where the fine-tuned model checkpoints will be saved.
+*   `--learning_rate`: Controls how much the model's weights are adjusted during training.
+*   `--batch_size`: The number of training examples used in one iteration. **Lower this if you get "CUDA out of memory" errors.**
+*   `--num_train_epochs`: The total number of times the model will cycle through the entire training dataset.
+*   `--logging_steps`: How often to print training progress (e.g., every 10 steps).
+*   `--save_steps`: How often to save a model checkpoint (e.g., every 50 steps).
 
-Here are some common issues and their solutions:
+## Step 6: Next Steps - Using Your Fine-Tuned Model
 
-*   **`CUDA out of memory`**: This is the most common error. It means the GPU does not have enough memory to handle the batch size.
-    *   **Solution**: Decrease the `--batch_size`. You can also try reducing `max_seq_length` in the `run_finetuning.py` script if smaller batch sizes don't work.
+Once the training is complete, you will find the model checkpoints in the `--output_dir` (e.g., `phi-3-mini-wellbeing-finetuned`).
 
-*   **`Runtime disconnected`**: This can happen if the Colab session is idle for too long or if you exceed the usage limits.
-    *   **Solution**: Re-run the notebook from the beginning. The training script is set up to save checkpoints, so you can often resume from where you left off by modifying the script to load from a checkpoint.
+#### 1. Download the Model
+-   In the Colab file explorer on the left, navigate to your project directory.
+-   Find the output folder (e.g., `phi-3-mini-wellbeing-finetuned`).
+-   Right-click the folder and select **Download** to save it to your local machine.
 
-*   **Installation Errors**: If you encounter issues while installing packages.
-    *   **Solution**: Try restarting the runtime (**Runtime -> Restart runtime**) and running the installation cells again. Ensure you are connected to the internet.
+#### 2. Convert to ONNX for Inference
+-   The downloaded folder contains the fine-tuned model in PyTorch format. To use it in the agent application, you need to convert it to the lightweight ONNX format.
+-   On your local machine, run the `export_to_onnx.py` script, pointing to the path of your downloaded checkpoint folder.
+
+```bash
+# Example command to run on your local machine
+python scripts/export_to_onnx.py \
+    --tuned_model_path "path/to/your/downloaded/checkpoint-100" \
+    --output_onnx_path "models/wellbeing_model.onnx"
 ```
+
+You now have a fine-tuned, efficient model ready for inference in the agent application.
+
+## Step 7: Troubleshooting
+
+*   **`CUDA out of memory`**: The most common error. This means the GPU ran out of memory.
+    *   **Solution**: In the command above, decrease the `--batch_size` (e.g., to 2 or 1). If the error persists, you can try reducing `max_seq_length` inside the `run_finetuning.py` script.
+*   **`Runtime disconnected`**: This can happen if the Colab session is idle for too long.
+    *   **Solution**: Re-run the notebook from the beginning. Training will resume from the last saved checkpoint if you don't delete the output directory.
+*   **Installation Errors**: If package installation fails.
+    *   **Solution**: Try restarting the runtime (**Runtime -> Restart runtime**) and running the installation cells again.

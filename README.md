@@ -106,44 +106,59 @@ python scripts/validate_model.py
 ```
 This will print a classification report and save a confusion matrix plot to the `validation_results/` directory. *(Note: The script currently uses placeholder predictions. To use your actual model, you would need to modify it to load the ONNX model and perform inference.)*
 
-## 6. Running the UI and Server
+## 6. Running the UI and Servers
 
-This project includes a local personal dashboard, a central server, and a management dashboard.
+The application consists of three main services that need to be run: the Personal Dashboard, the Central Analytics Hub, and the Management Dashboard's dedicated API.
 
-### Personal Dashboard (Agent UI)
+### 1. Personal Dashboard (Agent UI)
 
-This is a lightweight Bottle server that displays the employee-facing dashboard.
+This is the employee-facing dashboard. It's a lightweight Bottle server.
 
-1.  **Install bottle:**
+1.  **Install Dependencies:**
+    *Ensure your virtual environment is active.*
     ```bash
     pip install bottle
     ```
-2.  **Run the server:**
+2.  **Run the Server:**
     ```bash
     python src/agent_ui/main.py
     ```
-3.  Access the dashboard at `http://localhost:8080`.
+3.  Access the dashboard at `http://localhost:8080`. It includes a new, functional **Settings** page.
 
-### Central Analytics Hub (Server)
+### 2. Central Analytics Hub (Server)
 
-This is the main FastAPI server for collecting data.
+This is the main FastAPI server for collecting data from agents.
 
-1.  **Install dependencies:**
+1.  **Install Dependencies:**
     ```bash
     pip install -r src/server/requirements.txt
     ```
-2.  **Run the server:**
+2.  **Run the Server:**
     ```bash
     uvicorn src.server.main:app --reload --port 8000
     ```
-3.  The API will be available at `http://localhost:8000`.
+3.  The API is available at `http://localhost:8000`.
 
-### Management Dashboard
+### 3. Management Dashboard
 
-This is a simple React application. To view it, you just need to open the `index.html` file in your browser.
+The management dashboard is now a data-driven application with its own backend. **Both the API server and the frontend must be running.**
 
-1.  Navigate to the `src/management_dashboard` directory.
-2.  Open `index.html` in your web browser.
+**First, run the Management API Server:**
+
+1.  **Install Dependencies:**
+    ```bash
+    pip install -r src/management_dashboard/requirements.txt
+    ```
+2.  **Run the Server:**
+    ```bash
+    python src/management_dashboard/server.py
+    ```
+3.  The Management API will run at `http://localhost:8001`.
+
+**Then, open the Frontend:**
+
+1.  Navigate to the `src/management_dashboard` directory in your file explorer.
+2.  Open the `index.html` file in your web browser. The dashboard will fetch data from the Management API.
 
 ## 7. Testing
 
