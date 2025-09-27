@@ -79,7 +79,7 @@ def save_to_csv(data, filename):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(data)
-    print(f"Successfully generated and saved {len(data)} records to {filename}")
+    print("Successfully generated and saved {} records to {}".format(len(data), filename))
 
 if __name__ == "__main__":
     NUM_RECORDS_TO_GENERATE = 5000
