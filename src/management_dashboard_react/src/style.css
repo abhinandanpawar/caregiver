@@ -122,3 +122,16 @@ body {
     border-radius: 6px;
     color: var(--text-secondary);
 }
+
+/* --- Chart Container --- */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    padding: 20px;
+}
