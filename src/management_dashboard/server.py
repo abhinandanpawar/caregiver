@@ -35,9 +35,10 @@ app = FastAPI(
 )
 
 # --- CORS Middleware ---
+# This allows the React dashboard (running on a different port) to communicate with the API.
 origins = [
-    "http://localhost:5173",  # Default Vite dev server port
-    "http://127.0.0.1:5173",
+    "http://localhost:8080", # The management dashboard is served from the same port as the agent UI
+    "http://127.0.0.1:8080",
 ]
 
 app.add_middleware(

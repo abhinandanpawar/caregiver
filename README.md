@@ -23,7 +23,7 @@ The project is organized into the following directories:
 ├── src/                   # Main source code for the project.
 │   ├── agent_ui/          # Employee-facing personal dashboard (Bottle).
 │   ├── data_training/     # Scripts related to data generation and preprocessing.
-│   ├── management_dashboard_react/ # Management dashboard (React).
+│   ├── management_dashboard/ # Management dashboard (React).
 │   └── server/            # Central FastAPI server.
 ├── tests/                 # Unit tests for the core modules.
 └── validation_results/    # Output directory for validation artifacts (e.g., confusion matrix).
@@ -106,78 +106,59 @@ python scripts/validate_model.py
 ```
 This will print a classification report and save a confusion matrix plot to the `validation_results/` directory. *(Note: The script currently uses placeholder predictions. To use your actual model, you would need to modify it to load the ONNX model and perform inference.)*
 
-## 6. Running the UI and Server
+## 6. Running the UI and Servers
 
-This project includes a local personal dashboard, a central server, and a management dashboard.
+The application consists of three main services that need to be run: the Personal Dashboard, the Central Analytics Hub, and the Management Dashboard's dedicated API.
 
-### Personal Dashboard (Agent UI)
+### 1. Personal Dashboard (Agent UI)
 
-This is a lightweight Bottle server that displays the employee-facing dashboard.
+This is the employee-facing dashboard. It's a lightweight Bottle server.
 
-1.  **Install bottle:**
+1.  **Install Dependencies:**
+    *Ensure your virtual environment is active.*
     ```bash
     pip install bottle
     ```
-2.  **Run the server:**
+2.  **Run the Server:**
     ```bash
     python src/agent_ui/main.py
     ```
-3.  Access the dashboard at `http://localhost:8080`.
+3.  Access the dashboard at `http://localhost:8080`. It includes a new, functional **Settings** page.
 
-### Central Analytics Hub (Server)
+### 2. Central Analytics Hub (Server)
 
-This is the main FastAPI server for collecting data.
+This is the main FastAPI server for collecting data from agents.
 
-1.  **Install dependencies:**
+1.  **Install Dependencies:**
     ```bash
     pip install -r src/server/requirements.txt
     ```
-2.  **Run the server:**
+2.  **Run the Server:**
     ```bash
     uvicorn src.server.main:app --reload --port 8000
     ```
-3.  The API will be available at `http://localhost:8000`.
+3.  The API is available at `http://localhost:8000`.
 
-### Management Dashboard (React)
+### 3. Management Dashboard
 
-The management dashboard consists of a React frontend and a dedicated FastAPI backend. Both must be running for the dashboard to be fully functional.
+The management dashboard is now a data-driven application with its own backend. **Both the API server and the frontend must be running.**
 
-**1. Run the Frontend (Vite)**
+**First, run the Management API Server:**
 
-1.  **Navigate to the dashboard directory:**
+1.  **Install Dependencies:**
     ```bash
-    cd src/management_dashboard_react
+    pip install -r src/management_dashboard/requirements.txt
     ```
-
-2.  **Install Node.js dependencies:**
+2.  **Run the Server:**
     ```bash
-    npm install
+    python src/management_dashboard/server.py
     ```
+3.  The Management API will run at `http://localhost:8001`.
 
-3.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-4.  The frontend will be accessible at `http://localhost:5173`.
+**Then, open the Frontend:**
 
-**2. Run the Backend (FastAPI)**
-
-1.  **Navigate to the dashboard directory** (if not already there):
-    ```bash
-    cd src/management_dashboard_react
-    ```
-
-2.  **Install Python dependencies:**
-    *Ensure your virtual environment is active before running this command.*
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **Run the API server:**
-    ```bash
-    python server.py
-    ```
-4.  The API will be available at `http://localhost:8001`.
+1.  Navigate to the `src/management_dashboard` directory in your file explorer.
+2.  Open the `index.html` file in your web browser. The dashboard will fetch data from the Management API.
 
 ## 7. Testing
 
