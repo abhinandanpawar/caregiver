@@ -1,15 +1,13 @@
 # AI-Powered Employee Wellbeing Monitoring System
 
-This repository contains the complete source code, scripts, and documentation for the AI-Powered Employee Wellbeing Monitoring System. The system is designed to provide real-time, privacy-preserving insights into employee wellbeing by analyzing behavioral patterns.
-
-**Note:** This project is a comprehensive setup for fine-tuning a large language model (LLM) for a specific task. The actual model training is intended to be run on a dedicated GPU environment like Google Colab or Kaggle, and this repository provides all the necessary tools and guides to do so.
+This repository contains the complete source code, scripts, and documentation for the AI-Powered Employee Wellbeing Monitoring System. The system is designed to provide real-time, privacy-preserving insights into employee wellbeing by analyzing behavioral patterns using a classical machine learning model.
 
 ## 1. System Architecture
 
 The system consists of two main components as outlined in the [Technical Implementation Report](./docs/Technical_Implementation_Report.md):
 
-1.  **Individual AI Agent (Client-Side):** A lightweight, cross-platform agent that runs on an employee's machine. It collects work-related behavioral data, performs local inference using a quantized Phi-3-mini model, and displays a personal wellness dashboard. All data reported to the central hub is aggregated and anonymized.
-2.  **Central Analytics Hub (Server-Side):** A cloud-based platform that securely ingests, processes, and analyzes the anonymized data from all agents. It provides department-level insights to managers through a secure web dashboard, strictly enforcing privacy rules like the "minimum 5 employees" threshold for any reported metric.
+1.  **Individual AI Agent (Client-Side):** A lightweight, cross-platform agent that runs on an employee's machine. It collects work-related behavioral data, which can be sent to the central hub for analysis.
+2.  **Central Analytics Hub (Server-Side):** A cloud-based platform that securely ingests, processes, and analyzes anonymized data from all agents. It uses a trained `RandomForestClassifier` to predict wellness levels and provides department-level insights to managers through a secure web dashboard.
 
 ## 2. Repository Structure
 
@@ -18,8 +16,9 @@ The project is organized into the following directories:
 ```
 .
 ├── data/                  # Holds raw and processed datasets.
-├── docs/                  # Project documentation, including the technical report and Colab guide.
-├── scripts/               # Standalone scripts for tasks like fine-tuning, ONNX export, and validation.
+├── docs/                  # Project documentation.
+├── models/                # Saved trained model artifacts (e.g., wellness_model.pkl).
+├── scripts/               # Standalone scripts for training and validating the model.
 ├── src/                   # Main source code for the project.
 │   ├── agent_ui/          # Employee-facing personal dashboard (Bottle).
 │   ├── data_training/     # Scripts related to data generation and preprocessing.
@@ -32,10 +31,9 @@ The project is organized into the following directories:
 ## 3. Technology Stack
 
 -   **Core Language:** Python 3.10+
--   **AI Model:** Quantized `microsoft/Phi-3-mini-4k-instruct`
--   **Fine-Tuning:** PEFT (QLoRA) on Hugging Face Transformers
+-   **AI Model:** `scikit-learn` RandomForestClassifier
 -   **Data Handling:** pandas, scikit-learn
--   **Model Export:** ONNX
+-   **API Framework:** FastAPI, Bottle
 -   **Testing:** unittest
 
 ## 4. Setup and Installation
@@ -57,8 +55,7 @@ The project is organized into the following directories:
     pip install -r requirements.txt
     ```
 
-
-## 5. Usage Guide
+## 5. ML Model Usage Guide
 
 ### Step 1: Generate Synthetic Data
 
@@ -76,35 +73,21 @@ Once you have the raw data, preprocess it to prepare for training. This script w
 python src/data_training/preprocess_data.py
 ```
 
-### Step 3: Fine-Tune the Model on Google Colab
+### Step 3: Train the Model
 
-The model fine-tuning is resource-intensive and should be performed on a GPU. We have prepared a detailed guide for this process in a Jupyter Notebook.
-
-**Follow the guide here: [Fine_Tuning_on_Colab.md](./docs/Fine_Tuning_on_Colab.md)**
-
-The guide will walk you through:
-- Setting up a T4 GPU runtime on Colab.
-- Mounting your Google Drive to access project files.
-- Installing all required libraries.
-- Running the `run_finetuning.py` script to train the model.
-
-### Step 4: Export the Model to ONNX
-
-After fine-tuning, you will have model checkpoints saved in the output directory (e.g., `phi-3-mini-wellbeing-finetuned`). To convert a checkpoint to the lightweight ONNX format for inference, use the export script.
+Now, train the RandomForest model using the preprocessed data. This script will save the trained model to `models/wellness_model.pkl`.
 
 ```bash
-python scripts/export_to_onnx.py --tuned_model_path "path/to/your/checkpoint" --output_onnx_path "models/wellbeing_model.onnx"
+python scripts/train_model.py
 ```
-*(Replace `path/to/your/checkpoint` with the actual path to your saved model checkpoint, e.g., `phi-3-mini-wellbeing-finetuned/checkpoint-100`)*
 
-### Step 5: Validate the Model
+### Step 4: Validate the Model
 
-To evaluate the performance of your model, run the validation script. This script uses the validation dataset (`val_data.csv`) to calculate key metrics.
+To evaluate the performance of your trained model, run the validation script. This script uses the validation dataset (`val_data.csv`) to calculate key metrics and saves a confusion matrix plot to the `validation_results/` directory.
 
 ```bash
 python scripts/validate_model.py
 ```
-This will print a classification report and save a confusion matrix plot to the `validation_results/` directory. *(Note: The script currently uses placeholder predictions. To use your actual model, you would need to modify it to load the ONNX model and perform inference.)*
 
 ## 6. Running the UI and Servers
 
@@ -123,11 +106,11 @@ This is the employee-facing dashboard. It's a lightweight Bottle server.
     ```bash
     python src/agent_ui/main.py
     ```
-3.  Access the dashboard at `http://localhost:8080`. It includes a new, functional **Settings** page.
+3.  Access the dashboard at `http://localhost:8080`.
 
 ### 2. Central Analytics Hub (Server)
 
-This is the main FastAPI server for collecting data from agents.
+This is the main FastAPI server for collecting data from agents and making predictions.
 
 1.  **Install Dependencies:**
     ```bash
@@ -141,7 +124,7 @@ This is the main FastAPI server for collecting data from agents.
 
 ### 3. Management Dashboard
 
-The management dashboard is now a data-driven application with its own backend. **Both the API server and the frontend must be running.**
+The management dashboard is a data-driven application with its own backend. **Both the API server and the frontend must be running.**
 
 **First, run the Management API Server:**
 
