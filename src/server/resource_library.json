@@ -1,0 +1,48 @@
+{
+  "Healthy": [
+    {
+      "title": "Maintain Your Momentum: Tips for Staying Productive",
+      "description": "An article on how to maintain healthy habits and productivity.",
+      "link": "https://www.example.com/healthy-productivity"
+    },
+    {
+      "title": "The Importance of Regular Breaks",
+      "description": "Learn why taking regular breaks is crucial for long-term wellbeing.",
+      "link": "https://www.example.com/importance-of-breaks"
+    }
+  ],
+  "Stressed": [
+    {
+      "title": "5-Minute Guided Breathing Exercise",
+      "description": "A short, guided audio exercise to calm your mind and reduce stress.",
+      "link": "https://www.example.com/breathing-exercise"
+    },
+    {
+      "title": "The Pomodoro Technique: A Guide to Focused Work",
+      "description": "Learn how to use this time management method to reduce stress and improve focus.",
+      "link": "https://www.example.com/pomodoro-technique"
+    },
+    {
+      "title": "Managing Work-Life Balance in a Hybrid World",
+      "description": "A talk on practical strategies for setting boundaries and avoiding overwork.",
+      "link": "https://www.example.com/work-life-balance-talk"
+    }
+  ],
+  "Burnout": [
+    {
+      "title": "Recognizing the Signs of Burnout",
+      "description": "An essential guide to identifying the early symptoms of burnout.",
+      "link": "https://www.example.com/recognizing-burnout"
+    },
+    {
+      "title": "Setting Healthy Boundaries at Work",
+      "description": "Learn how to protect your time and energy by setting clear boundaries.",
+      "link": "https://www.example.com/setting-boundaries"
+    },
+    {
+      "title": "Accessing Company Mental Health Resources",
+      "description": "A direct link to our company's confidential mental health support program.",
+      "link": "https://www.example.com/company-mental-health"
+    }
+  ]
+}
