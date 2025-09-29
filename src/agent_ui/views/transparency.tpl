@@ -14,6 +14,8 @@
             <h1>Data Transparency & Privacy</h1>
             <nav>
                 <a href="/">Dashboard</a>
+                <a href="/kanban">Kanban Board</a>
+                <a href="/goals">My Goals</a>
                 <a href="/data-transparency" class="active">Data Transparency</a>
                 <a href="/settings">Settings</a>
             </nav>

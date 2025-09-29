@@ -14,6 +14,8 @@
             <h1>Your Personal Wellness Dashboard</h1>
             <nav>
                 <a href="/" class="active">Dashboard</a>
+                <a href="/kanban">Kanban Board</a>
+                <a href="/goals">My Goals</a>
                 <a href="/data-transparency">Data Transparency</a>
                 <a href="/settings">Settings</a>
             </nav>

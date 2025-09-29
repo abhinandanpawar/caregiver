@@ -14,6 +14,8 @@
             <h1>Settings</h1>
             <nav>
                 <a href="/">Dashboard</a>
+                <a href="/kanban">Kanban Board</a>
+                <a href="/goals">My Goals</a>
                 <a href="/data-transparency">Data Transparency</a>
                 <a href="/settings" class="active">Settings</a>
             </nav>

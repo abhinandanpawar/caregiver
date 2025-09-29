@@ -1,0 +1,83 @@
+/* Goals Page Specific Styles */
+.goals-list {
+    list-style: none;
+    padding: 0;
+}
+
+.goals-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.goals-list li:last-child {
+    border-bottom: none;
+}
+
+.goals-list .goal-content {
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+.goals-list .completed .goal-content {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.goal-actions button {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 0.9em;
+}
+
+.goal-actions .complete-btn {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.goal-actions .complete-btn:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.goal-actions .delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.goal-actions .delete-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.goal-actions .undo-btn {
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.goal-actions .undo-btn:hover {
+    background-color: #ffc107;
+    color: white;
+}
+
+#add-goal-form {
+    display: flex;
+    gap: 10px;
+}
+
+#add-goal-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#add-goal-form button {
+    padding: 10px 20px;
+}
