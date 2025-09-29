@@ -36,37 +36,51 @@ To make the application more actionable, we've integrated the following UI featu
 └── validation_results/    # Output from the model validation script.
 ```
 
-## 3. Technology Stack
--   **Core Language:** Python 3.10+
--   **Production ML:** `scikit-learn`, `pandas`
--   **Experimental LLM:** `Hugging Face Transformers`, `PEFT (QLoRA)`, `bitsandbytes`
--   **Model Export:** ONNX
--   **Backend Frameworks:** FastAPI, Bottle
--   **Testing:** `unittest`
+## 3. Setup and Installation
 
-## 4. Setup and Installation
-1.  **Clone the repository:**
+This project has two setup paths: one for **end-users** who just want to run the application, and one for **developers** who want to contribute or experiment with the models.
+
+### For End-Users (Running the Application)
+
+This setup uses the pre-trained `scikit-learn` model and is the fastest way to get started.
+
+1.  **Clone the repository and set up the environment:**
     ```bash
     git clone <repository-url>
     cd <repository-name>
-    ```
-2.  **Create a virtual environment:**
-    ```bash
     python -m venv venv
     source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
-3.  **Install dependencies:**
+
+2.  **Install minimal dependencies:**
     ```bash
     pip install -r requirements.txt
-    pip install -r src/server/requirements.txt
-    pip install bottle
     ```
 
-## 5. Usage Guide
-This guide is split into two parts: running the production-ready system and experimenting with the advanced LLM.
+3.  **Run the application:** (See the "Running the Application" section below).
 
-### Part A: The Ready-to-Use System (RandomForest Model)
-This workflow uses the fast and accurate `scikit-learn` model.
+### For Developers (Contributing & Experimentation)
+
+This setup installs all packages needed for training, testing, and LLM experimentation.
+
+1.  **Clone the repository and set up the environment:**
+    ```bash
+    git clone <repository-url>
+    cd <repository-name>
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
+
+2.  **Install all development dependencies:**
+    ```bash
+    pip install -r dev_requirements.txt
+    ```
+
+## 4. Developer Guide: Training and Validation
+
+This guide is for developers who want to train the models from scratch.
+
+### Scikit-Learn Model Workflow
 
 **Step 1: Generate Synthetic Data**
 ```bash
@@ -91,7 +105,8 @@ Evaluate the model's performance. It should achieve ~95.6% accuracy.
 python scripts/validate_model.py
 ```
 
-### Part B: Advanced Experimentation (LLM Fine-Tuning)
+### Advanced LLM Fine-Tuning Workflow
+
 This workflow is for advanced users and requires a **GPU-enabled environment** like Google Colab or Kaggle.
 
 **Step 1: Fine-Tune the LLM**
@@ -107,7 +122,7 @@ After fine-tuning, convert the model checkpoint to the lightweight ONNX format f
 python scripts/export_to_onnx.py --tuned_model_path "path/to/your/checkpoint" --output_onnx_path "models/phi3_wellbeing.onnx"
 ```
 
-## 6. Running the Application
+## 5. Running the Application
 The application consists of two main services that should be run separately.
 
 **1. The Prediction Server (FastAPI)**
@@ -123,13 +138,13 @@ python src/agent_ui/main.py
 ```
 Access the dashboard at `http://localhost:8080`.
 
-## 7. Testing
+## 6. Testing
 To ensure the integrity of the codebase, run the suite of unit tests:
 ```bash
 python -m unittest discover tests
 ```
 
-## 8. Contributing
+## 7. Contributing
 We welcome contributions! If you're interested in improving the platform, here are some ideas:
 -   **Enhance the UI:** Improve the styling and interactivity of the React and Bottle frontends.
 -   **Add More Tools:** Implement other productivity tools like a Pomodoro timer or a daily mood journal.
