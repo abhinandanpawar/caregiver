@@ -1,20 +1,23 @@
 import os
 import json
 import time
-from bottle import route, run, template, static_file, request, TEMPLATE_PATH, response
+from bottle import route, run, static_file, request, response
 
 # --- Configuration ---
 HOST = 'localhost'
 PORT = 8080
-STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
-VIEWS_PATH = os.path.join(os.path.dirname(__file__), 'views')
+
+# Define paths for the new React frontend
+# Assumes the React app is built into the 'frontend/dist' directory
+FRONTEND_PATH = os.path.join(os.path.dirname(__file__), 'frontend', 'dist')
+ASSETS_PATH = os.path.join(FRONTEND_PATH, 'assets')
+
+# Define paths for data files
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
 SETTINGS_FILE = os.path.join(DATA_PATH, 'settings.json')
 KANBAN_DATA_FILE = os.path.join(DATA_PATH, 'kanban_board.json')
 GOALS_DATA_FILE = os.path.join(DATA_PATH, 'goals.json')
 
-# Add the views path to Bottle's template search path
-TEMPLATE_PATH.insert(0, VIEWS_PATH)
 
 # --- Data Helper Functions ---
 def load_json_data(file_path, default_data):
@@ -35,43 +38,15 @@ def save_json_data(file_path, data):
     except IOError as e:
         print(f"Error saving data to {file_path}: {e}")
 
-# --- Static File Server ---
-@route('/static/<filepath:path>')
-def server_static(filepath):
-    """Serves static files from the 'static' directory."""
-    return static_file(filepath, root=STATIC_PATH)
-
-# --- Page Routes ---
-@route('/')
-def index():
-    return template('dashboard.tpl', data={})
-
-@route('/data-transparency')
-def data_transparency():
-    return template('transparency.tpl', info={})
-
-@route('/settings', method=['GET', 'POST'])
-def settings_route():
-    if request.method == 'POST':
-        settings = {
-            'data_collection': request.forms.get('data_collection'),
-            'notification_level': request.forms.get('notification_level')
-        }
-        save_json_data(SETTINGS_FILE, settings)
-        return template('settings.tpl', settings=settings, message="Settings saved successfully!")
-    settings = load_json_data(SETTINGS_FILE, {'data_collection': 'enabled', 'notification_level': 'all'})
-    return template('settings.tpl', settings=settings, message=None)
-
-@route('/kanban')
-def kanban_page():
-    return template('kanban.tpl')
-
-@route('/goals')
-def goals_page():
-    """Serves the Goals page."""
-    return template('goals.tpl')
+# --- Static File Server for React App ---
+# Serves the static assets (JS, CSS, images) from the 'dist/assets' directory
+@route('/assets/<filepath:path>')
+def server_assets(filepath):
+    return static_file(filepath, root=ASSETS_PATH)
 
 # --- API Routes ---
+# These routes provide the backend functionality for the frontend application.
+
 @route('/api/board', method='GET')
 def get_board_data():
     response.content_type = 'application/json'
@@ -149,7 +124,17 @@ def delete_goal(goal_id):
     save_json_data(GOALS_DATA_FILE, goals_data)
     return {"status": "success"}
 
+# --- SPA Catch-all Route ---
+# This route serves the main index.html for any non-API, non-asset request.
+# It allows React Router to handle the routing on the client side.
+@route('/')
+@route('/<path:path>')
+def serve_react_app(path=None):
+    return static_file('index.html', root=FRONTEND_PATH)
+
 # --- Main Execution ---
 if __name__ == '__main__':
-    print(f"Starting the Employee Wellness Dashboard at http://{HOST}:{PORT}")
+    print(f"Starting the WAVES backend server at http://{HOST}:{PORT}")
+    print(f"For development, run the React dev server from 'src/agent_ui/frontend' (npm run dev).")
+    print(f"For production, build the React app and this server will serve the static files.")
     run(host=HOST, port=PORT, debug=True)

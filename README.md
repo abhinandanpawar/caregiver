@@ -8,7 +8,7 @@ The application is built on a client-server model and features a dual-model appr
 
 #### Core Components
 1.  **Management Dashboard (Client-Side):** A modern, professional dashboard built with **React, TypeScript, and MUI**. It provides managers with an overview of organization-wide wellness analytics.
-2.  **Personal Dashboard (Client-Side):** A lightweight, local dashboard built with **Bottle** that runs on an employee's machine. It serves as the user's private interface for all features, including the Kanban Board and Goal Setting tools.
+2.  **Personal Dashboard (Client-Side):** A newly refactored, modern dashboard built with **React, TypeScript, and MUI**. It runs locally and provides employees with a private, interactive interface for productivity tools like a Kanban board and goal tracking. The backend API is powered by Python/Bottle.
 3.  **Central Analytics Hub (Server-Side):** A robust **FastAPI** server that uses a trained machine learning model to provide real-time wellness predictions.
 
 #### The Dual-Model Approach
@@ -30,7 +30,7 @@ To make the application more actionable, we've integrated the following UI featu
 ├── models/                # Saved scikit-learn model artifacts (wellness_model.pkl).
 ├── scripts/               # Standalone scripts for training, validation, and LLM export.
 ├── src/                   # Main source code for the project.
-│   ├── agent_ui/          # Employee-facing personal dashboard (Bottle).
+│   ├── agent_ui/          # Refactored Personal Dashboard (React + Bottle API).
 │   ├── data_training/     # Scripts for data generation and preprocessing.
 │   ├── management_dashboard/ # NEW: Modern UI for management (React, Vite, MUI).
 │   └── server/            # Central FastAPI prediction server.
@@ -54,11 +54,25 @@ This setup uses the pre-trained `scikit-learn` model and is the fastest way to g
     source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
 
-2.  **Install minimal dependencies:**
+2.  **Install Python Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
-    *Note: For the new Management Dashboard, you will also need to install Node.js and run `npm install` in the `src/management_dashboard` directory.*
+
+3.  **Install Frontend Dependencies:**
+    This project contains two separate Node.js frontends. You will need to install dependencies for both.
+    - **Management Dashboard:**
+      ```bash
+      cd src/management_dashboard
+      npm install
+      cd ../..
+      ```
+    - **Personal Dashboard:**
+      ```bash
+      cd src/agent_ui/frontend
+      npm install
+      cd ../../..
+      ```
 
 
 ### For Developers (Contributing & Experimentation)
@@ -182,13 +196,30 @@ npm run dev
 ```
 Access the dashboard at `http://localhost:3000`.
 
-**3. The Personal Dashboard (Bottle)**
-This is the original user-facing UI with the Kanban board and other tools.
+**3. The Personal Dashboard (React + Bottle API)**
+The refactored Personal Dashboard requires two separate services to be run concurrently: the backend API server and the frontend development server.
+
+**a. Run the Personal Dashboard Backend (Bottle API)**
+This Python server provides the API for the Kanban board and goals feature.
 ```bash
 # From the project root
 python src/agent_ui/main.py
 ```
-Access the dashboard at `http://localhost:8080`.
+The API will be available at `http://localhost:8080`.
+
+**b. Run the Personal Dashboard Frontend (React)**
+This serves the new user interface.
+```bash
+# From the project root
+cd src/agent_ui/frontend
+
+# Install dependencies (if you haven't already)
+npm install
+
+# Run the development server
+npm run dev
+```
+Access the new dashboard at the URL provided by Vite (usually `http://localhost:5173`).
 
 ## 7. Testing
 To ensure the integrity of the codebase, run the suite of unit tests:
