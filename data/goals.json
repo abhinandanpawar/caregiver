@@ -1,0 +1,19 @@
+{
+  "goals": [
+    {
+      "id": "goal-1",
+      "content": "Take a 15-minute walk during my lunch break three times this week.",
+      "status": "completed"
+    },
+    {
+      "id": "goal-3",
+      "content": "Read a book for 20 minutes before bed instead of using my phone.",
+      "status": "completed"
+    },
+    {
+      "id": "goal-1759141166",
+      "content": "Drink 8 glasses of water today",
+      "status": "active"
+    }
+  ]
+}

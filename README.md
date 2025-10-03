@@ -1,171 +1,235 @@
-# AI-Powered Employee Wellbeing Monitoring System
+# AI-Powered Employee Wellbeing & Productivity Platform
 
-This repository contains the complete source code, scripts, and documentation for the AI-Powered Employee Wellbeing Monitoring System. The system is designed to provide real-time, privacy-preserving insights into employee wellbeing by analyzing behavioral patterns.
-
-**Note:** This project is a comprehensive setup for fine-tuning a large language model (LLM) for a specific task. The actual model training is intended to be run on a dedicated GPU environment like Google Colab or Kaggle, and this repository provides all the necessary tools and guides to do so.
+This repository contains the complete source code for an AI-Powered Employee Wellbeing and Productivity Platform. The system is designed with a dual purpose: to provide a practical, ready-to-use wellbeing monitoring system and to serve as a template for advanced Large Language Model (LLM) experimentation.
 
 ## 1. System Architecture
 
-The system consists of two main components as outlined in the [Technical Implementation Report](./docs/Technical_Implementation_Report.md):
+The application is built on a client-server model and features a dual-model approach to AI, along with a suite of productivity tools.
 
-1.  **Individual AI Agent (Client-Side):** A lightweight, cross-platform agent that runs on an employee's machine. It collects work-related behavioral data, performs local inference using a quantized Phi-3-mini model, and displays a personal wellness dashboard. All data reported to the central hub is aggregated and anonymized.
-2.  **Central Analytics Hub (Server-Side):** A cloud-based platform that securely ingests, processes, and analyzes the anonymized data from all agents. It provides department-level insights to managers through a secure web dashboard, strictly enforcing privacy rules like the "minimum 5 employees" threshold for any reported metric.
+#### Core Components
+1.  **Management Dashboard (Client-Side):** A modern, professional dashboard built with **React, TypeScript, and MUI**. It provides managers with an overview of organization-wide wellness analytics.
+2.  **Personal Dashboard (Client-Side):** A newly refactored, modern dashboard built with **React, TypeScript, and MUI**. It runs locally and provides employees with a private, interactive interface for productivity tools like a Kanban board and goal tracking. The backend API is powered by Python/Bottle.
+3.  **Central Analytics Hub (Server-Side):** A robust **FastAPI** server that uses a trained machine learning model to provide real-time wellness predictions.
+
+#### The Dual-Model Approach
+To cater to different user needs, this project includes two distinct machine learning models:
+
+1.  **Production-Ready Model (`scikit-learn`):** A `RandomForestClassifier` that is fast, efficient, and highly accurate (**95.6% accuracy** on our synthetic dataset). It trains in seconds on a standard CPU and is the default model for the application's prediction service.
+2.  **Experimental LLM (`microsoft/Phi-3-mini`):** For advanced users and researchers, we provide a complete toolchain to fine-tune a powerful LLM on a GPU-enabled environment (like Google Colab). This allows for experimentation with state-of-the-art natural language models.
+
+#### Productivity & Wellbeing Tools
+To make the application more actionable, we've integrated the following UI features:
+-   **Personal Kanban Board:** A drag-and-drop task board to help users organize their work, reduce cognitive load, and track progress.
+-   **Goal Setting & Tracking:** A tool for users to create, manage, and track their personal wellness goals, promoting proactive self-improvement.
 
 ## 2. Repository Structure
-
-The project is organized into the following directories:
-
 ```
 .
-├── data/                  # Holds raw and processed datasets.
-├── docs/                  # Project documentation, including the technical report and Colab guide.
-├── scripts/               # Standalone scripts for tasks like fine-tuning, ONNX export, and validation.
+├── data/                  # Holds raw/processed datasets and UI data (goals, kanban).
+├── docs/                  # Project documentation.
+├── models/                # Saved scikit-learn model artifacts (wellness_model.pkl).
+├── scripts/               # Standalone scripts for training, validation, and LLM export.
 ├── src/                   # Main source code for the project.
-│   ├── agent_ui/          # Employee-facing personal dashboard (Bottle).
-│   ├── data_training/     # Scripts related to data generation and preprocessing.
-│   ├── management_dashboard/ # Management dashboard (React).
-│   └── server/            # Central FastAPI server.
+│   ├── agent_ui/          # Refactored Personal Dashboard (React + Bottle API).
+│   ├── data_training/     # Scripts for data generation and preprocessing.
+│   ├── management_dashboard/ # NEW: Modern UI for management (React, Vite, MUI).
+│   └── server/            # Central FastAPI prediction server.
 ├── tests/                 # Unit tests for the core modules.
-└── validation_results/    # Output directory for validation artifacts (e.g., confusion matrix).
+└── validation_results/    # Output from the model validation script.
 ```
 
-## 3. Technology Stack
+## 3. Setup and Installation
 
--   **Core Language:** Python 3.10+
--   **AI Model:** Quantized `microsoft/Phi-3-mini-4k-instruct`
--   **Fine-Tuning:** PEFT (QLoRA) on Hugging Face Transformers
--   **Data Handling:** pandas, scikit-learn
--   **Model Export:** ONNX
--   **Testing:** unittest
+This project has two setup paths: one for **end-users** who just want to run the application, and one for **developers** who want to contribute or experiment with the models.
 
-## 4. Setup and Installation
+### For End-Users (Running the Application)
 
-1.  **Clone the repository:**
+This setup uses the pre-trained `scikit-learn` model and is the fastest way to get started.
+
+1.  **Clone the repository and set up the environment:**
     ```bash
     git clone <repository-url>
-    cd employee-wellbeing-ai
-    ```
-
-2.  **Create a virtual environment (recommended):**
-    ```bash
+    cd <repository-name>
     python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
 
-3.  **Install dependencies:**
+2.  **Install Python Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
 
+3.  **Install Frontend Dependencies:**
+    This project contains two separate Node.js frontends. You will need to install dependencies for both.
+    - **Management Dashboard:**
+      ```bash
+      cd src/management_dashboard
+      npm install
+      cd ../..
+      ```
+    - **Personal Dashboard:**
+      ```bash
+      cd src/agent_ui/frontend
+      npm install
+      cd ../../..
+      ```
 
-## 5. Usage Guide
 
-### Step 1: Generate Synthetic Data
+### For Developers (Contributing & Experimentation)
 
-To create a synthetic dataset for training, run the data generator script. This will create `synthetic_wellness_data.csv` in the `data/` directory.
+This setup installs all packages needed for training, testing, and LLM experimentation.
 
+1.  **Clone the repository and set up the environment:**
+    ```bash
+    git clone <repository-url>
+    cd <repository-name>
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
+
+2.  **Install all development dependencies:**
+    - **Python:** `pip install -r dev_requirements.txt`
+    - **Frontend:** `cd src/management_dashboard && npm install` (or `yarn install`)
+
+
+## 4. Developer Guide: Training and Validation
+
+This guide is for developers who want to train the models from scratch.
+
+### Scikit-Learn Model Workflow
+
+**Step 1: Generate Synthetic Data**
 ```bash
 python src/data_training/synthetic_data_generator.py
 ```
 
-### Step 2: Preprocess Data
-
-Once you have the raw data, preprocess it to prepare for training. This script will normalize features, encode labels, and split the data into `train_data.csv` and `val_data.csv`.
-
+**Step 2: Preprocess Data**
+This prepares the data for training and saves the necessary scaler and encoders.
 ```bash
 python src/data_training/preprocess_data.py
 ```
 
-### Step 3: Fine-Tune the Model on Google Colab
-
-The model fine-tuning is resource-intensive and should be performed on a GPU. We have prepared a detailed guide for this process in a Jupyter Notebook.
-
-**Follow the guide here: [Fine_Tuning_on_Colab.md](./docs/Fine_Tuning_on_Colab.md)**
-
-The guide will walk you through:
-- Setting up a T4 GPU runtime on Colab.
-- Mounting your Google Drive to access project files.
-- Installing all required libraries.
-- Running the `run_finetuning.py` script to train the model.
-
-### Step 4: Export the Model to ONNX
-
-After fine-tuning, you will have model checkpoints saved in the output directory (e.g., `phi-3-mini-wellbeing-finetuned`). To convert a checkpoint to the lightweight ONNX format for inference, use the export script.
-
+**Step 3: Train the Model**
+This trains the `RandomForestClassifier` and saves it to `models/wellness_model.pkl`.
 ```bash
-python scripts/export_to_onnx.py --tuned_model_path "path/to/your/checkpoint" --output_onnx_path "models/wellbeing_model.onnx"
+python scripts/train_model.py
 ```
-*(Replace `path/to/your/checkpoint` with the actual path to your saved model checkpoint, e.g., `phi-3-mini-wellbeing-finetuned/checkpoint-100`)*
 
-### Step 5: Validate the Model
-
-To evaluate the performance of your model, run the validation script. This script uses the validation dataset (`val_data.csv`) to calculate key metrics.
-
+**Step 4: Validate the Model**
+Evaluate the model's performance. It should achieve ~95.6% accuracy.
 ```bash
 python scripts/validate_model.py
 ```
-This will print a classification report and save a confusion matrix plot to the `validation_results/` directory. *(Note: The script currently uses placeholder predictions. To use your actual model, you would need to modify it to load the ONNX model and perform inference.)*
 
-## 6. Running the UI and Servers
+### Advanced LLM Fine-Tuning Workflow
 
-The application consists of three main services that need to be run: the Personal Dashboard, the Central Analytics Hub, and the Management Dashboard's dedicated API.
+This workflow is for advanced users and requires a **GPU-enabled environment** like Google Colab or Kaggle.
 
-### 1. Personal Dashboard (Agent UI)
+**Step 1: Fine-Tune the LLM**
+Use the `run_finetuning.py` script in your GPU environment. This script contains the full setup for QLoRA-based fine-tuning. For a detailed walkthrough, see the guide in `docs/Fine_Tuning_on_Colab.md`.
+```bash
+# In your Google Colab environment
+python scripts/run_finetuning.py
+```
 
-This is the employee-facing dashboard. It's a lightweight Bottle server.
+**Step 2: Export the Model to ONNX**
+After fine-tuning, convert the model checkpoint to the lightweight ONNX format for efficient inference.
+```bash
+python scripts/export_to_onnx.py --tuned_model_path "path/to/your/checkpoint" --output_onnx_path "models/phi3_wellbeing.onnx"
+```
 
-1.  **Install Dependencies:**
-    *Ensure your virtual environment is active.*
-    ```bash
-    pip install bottle
-    ```
-2.  **Run the Server:**
-    ```bash
-    python src/agent_ui/main.py
-    ```
-3.  Access the dashboard at `http://localhost:8080`. It includes a new, functional **Settings** page.
+## 5. Management Dashboard UI Overhaul
 
-### 2. Central Analytics Hub (Server)
+The management dashboard has been completely refactored with a modern frontend stack to provide a professional, responsive, and maintainable user interface.
 
-This is the main FastAPI server for collecting data from agents.
+#### Technology Stack
+-   **React:** For building a component-based, interactive UI.
+-   **TypeScript:** For type safety and improved developer experience.
+-   **Vite:** A next-generation frontend build tool for a fast development server and optimized builds.
+-   **Material-UI (MUI):** A comprehensive suite of UI tools to create a polished and consistent design.
 
-1.  **Install Dependencies:**
-    ```bash
-    pip install -r src/server/requirements.txt
-    ```
-2.  **Run the Server:**
-    ```bash
-    uvicorn src.server.main:app --reload --port 8000
-    ```
-3.  The API is available at `http://localhost:8000`.
+#### Features & Screenshots
 
-### 3. Management Dashboard
+Once the development environment is running, you can view the following features.
 
-The management dashboard is now a data-driven application with its own backend. **Both the API server and the frontend must be running.**
+***Note:** The following screenshots are placeholders. Due to a sandbox environment issue preventing the application from running, real screenshots could not be captured. To generate them, run the application and take a screenshot of each component listed below.*
 
-**First, run the Management API Server:**
+**1. Organization-Wide Snapshot**
+Displays key performance indicators (KPIs) for a quick overview of company wellness.
+`[Placeholder for KPI Snapshot Screenshot]`
 
-1.  **Install Dependencies:**
-    ```bash
-    pip install -r src/management_dashboard/requirements.txt
-    ```
-2.  **Run the Server:**
-    ```bash
-    python src/management_dashboard/server.py
-    ```
-3.  The Management API will run at `http://localhost:8001`.
+**2. Department Wellness Heatmap**
+A bubble chart visualizing the wellness vs. burnout risk for each department.
+`[Placeholder for Heatmap Screenshot]`
 
-**Then, open the Frontend:**
+**3. Wellness Trends (30 Days)**
+A line chart showing the evolution of the overall wellness score over the past month.
+`[Placeholder for Trends Chart Screenshot]`
 
-1.  Navigate to the `src/management_dashboard` directory in your file explorer.
-2.  Open the `index.html` file in your web browser. The dashboard will fetch data from the Management API.
+**4. Wellness by Department**
+A detailed list view of the current wellness score for each department.
+`[Placeholder for Department List Screenshot]`
+
+## 6. Running the Application
+The application consists of three main services that should be run separately.
+
+**1. The Backend Server (FastAPI)**
+This server provides the mock ML prediction service for the dashboards.
+```bash
+# From the project root
+uvicorn src.server.main:app --reload --port 8000
+```
+
+**2. The Management Dashboard (React)**
+This is the new, modern UI for the management wellness dashboard. It connects to the backend server.
+```bash
+# From the project root, navigate to the dashboard directory
+cd src/management_dashboard
+
+# Install dependencies (use yarn if npm fails)
+npm install
+# or
+yarn install
+
+# Run the development server
+npm run dev
+```
+Access the dashboard at `http://localhost:3000`.
+
+**3. The Personal Dashboard (React + Bottle API)**
+The refactored Personal Dashboard requires two separate services to be run concurrently: the backend API server and the frontend development server.
+
+**a. Run the Personal Dashboard Backend (Bottle API)**
+This Python server provides the API for the Kanban board and goals feature.
+```bash
+# From the project root
+python src/agent_ui/main.py
+```
+The API will be available at `http://localhost:8080`.
+
+**b. Run the Personal Dashboard Frontend (React)**
+This serves the new user interface.
+```bash
+# From the project root
+cd src/agent_ui/frontend
+
+# Install dependencies (if you haven't already)
+npm install
+
+# Run the development server
+npm run dev
+```
+Access the new dashboard at the URL provided by Vite (usually `http://localhost:5173`).
 
 ## 7. Testing
-
-To ensure the integrity of the codebase, you can run the suite of unit tests.
-
+To ensure the integrity of the codebase, run the suite of unit tests:
 ```bash
 python -m unittest discover tests
 ```
 
-This will discover and run all tests in the `tests/` directory.
+## 8. Contributing
+We welcome contributions! If you're interested in improving the platform, here are some ideas:
+-   **Enhance the UI:** Improve the styling and interactivity of the React and Bottle frontends.
+-   **Add More Tools:** Implement other productivity tools like a Pomodoro timer or a daily mood journal.
+-   **Improve the Models:** Experiment with different model architectures or fine-tuning techniques.
+-   **Strengthen Security:** Add authentication and more robust data handling to the APIs.

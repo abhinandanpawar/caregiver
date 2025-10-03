@@ -1,0 +1,38 @@
+{
+  "columns": [
+    {
+      "id": "todo",
+      "title": "To Do",
+      "tasks": [
+        {
+          "id": "task-1",
+          "content": "Analyze weekly performance report"
+        }
+      ]
+    },
+    {
+      "id": "inprogress",
+      "title": "In Progress",
+      "tasks": [
+        {
+          "id": "task-3",
+          "content": "Develop the new feature"
+        },
+        {
+          "id": "task-2",
+          "content": "Prepare for team meeting"
+        }
+      ]
+    },
+    {
+      "id": "done",
+      "title": "Done",
+      "tasks": [
+        {
+          "id": "task-4",
+          "content": "Fix the login bug"
+        }
+      ]
+    }
+  ]
+}

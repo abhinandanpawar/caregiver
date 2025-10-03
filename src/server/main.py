@@ -1,78 +1,108 @@
-from fastapi import FastAPI, Request, Header, HTTPException
+import pickle
+import json
+import pandas as pd
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
+from typing import List, Dict
 
-# --- Pydantic Models for Request Body ---
-class Metric(BaseModel):
-    name: str
-    value: float
+# --- Global objects to hold the model and other artifacts ---
+ARTIFACTS = {}
+
+# --- Pydantic Models ---
+class PredictionInput(BaseModel):
+    """Defines the structure for a single prediction request."""
+    focus_session_length_minutes: float
+    break_frequency_per_hour: float
+    after_hours_activity_minutes: float
+    communication_sentiment_score: float
     department: str
 
-class EncryptedPayload(BaseModel):
-    schema_version: str = "1.0"
-    metrics: List[Metric]
+class Resource(BaseModel):
+    """Defines the structure for a single wellness resource."""
+    title: str
+    description: str
+    link: str
 
-class AgentReport(BaseModel):
-    agent_id: str
-    org_id: str
-    timestamp_utc: str
-    agent_version: str
-    payload: str # This would be an encrypted blob in a real scenario
+class PredictionOutput(BaseModel):
+    """Defines the structure for the enhanced prediction response."""
+    wellness_label: str
+    recommended_resources: List[Resource]
 
 # --- FastAPI Application ---
 app = FastAPI(
     title="Employee Wellbeing Analytics Hub",
-    description="The central server for collecting and processing anonymized employee wellness data.",
-    version="1.0.0"
+    description="A server for analyzing employee wellness data and providing personalized resources.",
+    version="1.2.0"
 )
 
-# --- API Endpoint ---
-@app.post("/v1/report/anonymous")
-async def receive_anonymous_report(
-    report: AgentReport,
-    x_api_key: Optional[str] = Header(None)
-):
-    """
-    Receives an anonymized and encrypted report from a client agent.
+# --- Startup Event Handler ---
+@app.on_event("startup")
+def load_artifacts():
+    """Load the model, transformers, and resource library into memory."""
+    print("Loading artifacts...")
+    try:
+        # Load ML model and transformers
+        with open("models/wellness_model.pkl", "rb") as f:
+            ARTIFACTS['model'] = pickle.load(f)
+        with open("models/scaler.pkl", "rb") as f:
+            ARTIFACTS['scaler'] = pickle.load(f)
+        with open("models/department_encoder.pkl", "rb") as f:
+            ARTIFACTS['department_encoder'] = pickle.load(f)
+        with open("models/label_encoder.pkl", "rb") as f:
+            ARTIFACTS['label_encoder'] = pickle.load(f)
 
-    In a real-world scenario, this endpoint would:
-    1.  Authenticate the request via the `X-API-Key`.
-    2.  Place the raw report into a message queue (e.g., AWS SQS) for asynchronous processing.
-    3.  A separate worker would decrypt the payload, validate it, and aggregate the metrics.
+        # Load the resource library
+        with open("src/server/resource_library.json", "r") as f:
+            ARTIFACTS['resource_library'] = json.load(f)
 
-    For this implementation, we will simply log the received data to simulate the process.
-    """
-    print("--- New Anonymous Report Received ---")
+        print("Artifacts loaded successfully.")
+    except FileNotFoundError as e:
+        print(f"Error loading artifacts: {e}")
+        raise RuntimeError("Could not load all required artifacts. Ensure training has been run and resource_library.json exists.")
 
-    # 1. API Key Authentication (Placeholder)
-    if not x_api_key:
-        raise HTTPException(status_code=401, detail="X-API-Key header is missing.")
-    # In a real app, you'd validate the key against a database.
-    print("API Key: Validated (Placeholder)")
-
-    # 2. Log the received report data
-    print("Agent ID: {}".format(report.agent_id))
-    print("Organization ID: {}".format(report.org_id))
-    print("Timestamp: {}".format(report.timestamp_utc))
-
-    # 3. Simulate payload decryption and logging
-    # In a real app, `report.payload` would be an encrypted string. Here we just print it.
-    print("Encrypted Payload (Placeholder): {}".format(report.payload))
-    print("--- End of Report ---")
-
-    # The agent_id would be discarded after this point to ensure anonymity.
-
-    return {"status": "success", "message": "Report received and queued for processing."}
-
-# --- Root Endpoint for Health Check ---
+# --- API Endpoints ---
 @app.get("/")
 def read_root():
     """A simple health check endpoint."""
     return {"status": "ok", "message": "Analytics Hub is running."}
 
+@app.post("/predict", response_model=PredictionOutput)
+def predict_wellness(input_data: PredictionInput):
+    """
+    Predicts the wellness level and returns relevant resources.
+    """
+    required_artifacts = ['model', 'scaler', 'department_encoder', 'label_encoder', 'resource_library']
+    if not all(k in ARTIFACTS for k in required_artifacts):
+        raise HTTPException(status_code=503, detail="Artifacts are not loaded. The service is unavailable.")
+
+    try:
+        # 1. Convert input to a DataFrame and preprocess
+        input_df = pd.DataFrame([input_data.dict()])
+        input_df['department'] = ARTIFACTS['department_encoder'].transform(input_df['department'])
+        numerical_cols = input_df.columns.drop('department')
+        input_df[numerical_cols] = ARTIFACTS['scaler'].transform(input_df[numerical_cols])
+
+        training_cols = ['focus_session_length_minutes', 'break_frequency_per_hour',
+                         'after_hours_activity_minutes', 'communication_sentiment_score', 'department']
+        input_df = input_df[training_cols]
+
+        # 2. Make a prediction
+        prediction_encoded = ARTIFACTS['model'].predict(input_df)
+        prediction_label = ARTIFACTS['label_encoder'].inverse_transform(prediction_encoded)[0]
+
+        # 3. Look up recommended resources
+        resources = ARTIFACTS['resource_library'].get(prediction_label, [])
+
+        return {
+            "wellness_label": prediction_label,
+            "recommended_resources": resources
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"An error occurred during prediction: {e}")
+
 # --- To run this server locally ---
-# 1. Install dependencies: pip install fastapi "uvicorn[standard]"
-# 2. Run the server: uvicorn src.server.main:app --reload
+# uvicorn src.server.main:app --reload
 if __name__ == "__main__":
     import uvicorn
     print("Starting FastAPI server...")
