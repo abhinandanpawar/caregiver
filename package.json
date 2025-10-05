@@ -1,0 +1,28 @@
+{
+  "devDependencies": {
+    "@playwright/test": "^1.55.1"
+  },
+  "name": "app",
+  "version": "1.0.0",
+  "description": "This repository contains the complete source code for an AI-Powered Employee Wellbeing and Productivity Platform. The system is designed with a dual purpose: to provide a practical, ready-to-use wellbeing monitoring system and to serve as a template for advanced Large Language Model (LLM) experimentation.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhinandanpawar/caregiver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/abhinandanpawar/caregiver/issues"
+  },
+  "homepage": "https://github.com/abhinandanpawar/caregiver#readme"
+}

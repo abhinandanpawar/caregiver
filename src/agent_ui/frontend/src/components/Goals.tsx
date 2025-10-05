@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 // I will build this out with functionality to add, view, and delete goals.
 
 const Goals = () => {
-    const [goals, setGoals] = useState([]);
+    // const [goals, setGoals] = useState([]);
     const [newGoal, setNewGoal] = useState('');
 
     // Placeholder for fetching data from the backend API
@@ -22,10 +22,10 @@ const Goals = () => {
         setNewGoal('');
     };
 
-    const handleDeleteGoal = (id) => {
+    /* const handleDeleteGoal = (id: any) => {
         // Logic to delete a goal via API will be implemented here
         console.log(`Deleting goal with id: ${id}`);
-    };
+    };*/
 
     return (
         <Box>

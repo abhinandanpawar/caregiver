@@ -1,9 +1,11 @@
-import React from 'react';
 import KanbanBoard from '../components/KanbanBoard';
+import { Box } from '@mui/material';
 
 const KanbanPage = () => {
   return (
-    <KanbanBoard />
+    <Box sx={{ p: 3 }}>
+      <KanbanBoard />
+    </Box>
   );
 };
 

@@ -1,9 +1,11 @@
-import React from 'react';
 import Goals from '../components/Goals';
+import { Box } from '@mui/material';
 
 const GoalsPage = () => {
   return (
-    <Goals />
+    <Box sx={{ p: 3 }}>
+      <Goals />
+    </Box>
   );
 };
 

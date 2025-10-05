@@ -1,0 +1,26 @@
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Build output
+dist/
+build/
+
+# IDE / Editor specific
+.vscode/
+.idea/
+
+# Temporary files
+jules-scratch/
+*.swp
+*~
+
+# OS-specific
+.DS_Store
+Thumbs.db

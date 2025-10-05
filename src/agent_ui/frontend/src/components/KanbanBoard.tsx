@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { /*arrayMove, SortableContext,*/ sortableKeyboardCoordinates/*, verticalListSortingStrategy*/ } from '@dnd-kit/sortable';
 import { Typography, Box } from '@mui/material';
 
 // This is a placeholder for the full Kanban board implementation.
 // I will build this out with columns and draggable cards.
 
 const KanbanBoard = () => {
-    const [items, setItems] = useState({});
+    // const [items, setItems] = useState({});
 
     // Placeholder for fetching data from the backend API
     useEffect(() => {
@@ -22,7 +22,7 @@ const KanbanBoard = () => {
         })
     );
 
-    const handleDragEnd = (event) => {
+    const handleDragEnd = (event: any) => {
         const { active, over } = event;
         if (over && active.id !== over.id) {
             // Logic to handle reordering will be implemented here

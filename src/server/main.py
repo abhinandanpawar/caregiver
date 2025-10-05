@@ -2,6 +2,7 @@ import pickle
 import json
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Dict
 
@@ -33,6 +34,21 @@ app = FastAPI(
     title="Employee Wellbeing Analytics Hub",
     description="A server for analyzing employee wellness data and providing personalized resources.",
     version="1.2.0"
+)
+
+# --- CORS Middleware ---
+# Allow requests from the React frontend
+origins = [
+    "http://localhost:3000",
+    "http://localhost:5173", # The default for Vite
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # --- Startup Event Handler ---
@@ -100,6 +116,66 @@ def predict_wellness(input_data: PredictionInput):
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"An error occurred during prediction: {e}")
+
+# --- Mock Dashboard Data Models ---
+class KPI(BaseModel):
+    title: str
+    value: str
+    change: str
+
+class TrendDataPoint(BaseModel):
+    date: str
+    score: float
+
+class HeatmapDataPoint(BaseModel):
+    department: str
+    wellness_score: float
+    burnout_risk: float
+
+class DepartmentData(BaseModel):
+    name: str
+    wellness_score: float
+    trend: str
+
+# --- Mock API Endpoints for Dashboard ---
+@app.get("/api/v1/dashboard/kpis", response_model=List[KPI])
+def get_kpis():
+    """Returns mock KPI data for the dashboard."""
+    return [
+        {"title": "Overall Wellness Score", "value": "78/100", "change": "+5%"},
+        {"title": "Departments at Risk", "value": "3", "change": "-1"},
+        {"title": "Positive Trend", "value": "82%", "change": "+2%"},
+    ]
+
+@app.get("/api/v1/dashboard/trends", response_model=List[TrendDataPoint])
+def get_trends():
+    """Returns mock wellness trend data for the last 30 days."""
+    return [
+        {"date": "2023-09-01", "score": 72}, {"date": "2023-09-08", "score": 75},
+        {"date": "2023-09-15", "score": 74}, {"date": "2023-09-22", "score": 78},
+        {"date": "2023-09-29", "score": 80},
+    ]
+
+@app.get("/api/v1/dashboard/heatmap", response_model=List[HeatmapDataPoint])
+def get_heatmap_data():
+    """Returns mock heatmap data for department wellness vs. burnout."""
+    return [
+        {"department": "Engineering", "wellness_score": 85, "burnout_risk": 15},
+        {"department": "Marketing", "wellness_score": 72, "burnout_risk": 28},
+        {"department": "Sales", "wellness_score": 68, "burnout_risk": 32},
+        {"department": "HR", "wellness_score": 90, "burnout_risk": 10},
+    ]
+
+@app.get("/api/v1/dashboard/departments", response_model=List[DepartmentData])
+def get_department_data():
+    """Returns a mock list of departments and their wellness scores."""
+    return [
+        {"name": "Engineering", "wellness_score": 85, "trend": "up"},
+        {"name": "Marketing", "wellness_score": 72, "trend": "down"},
+        {"name": "Sales", "wellness_score": 68, "trend": "down"},
+        {"name": "HR", "wellness_score": 90, "trend": "up"},
+        {"name": "Customer Support", "wellness_score": 78, "trend": "stable"},
+    ]
 
 # --- To run this server locally ---
 # uvicorn src.server.main:app --reload
