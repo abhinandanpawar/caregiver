@@ -1,35 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, Grid, Alert } from '@mui/material';
+import SkeletonCard from './SkeletonCard';
+
+interface KpiData {
+  overall_score: number;
+  departments_at_risk: number;
+  positive_trend: string;
+}
 
 const KPICard = () => {
-  const [kpiData, setKpiData] = useState(null);
-  const [error, setError] = useState(null);
+  const [kpiData, setKpiData] = useState<KpiData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/v1/dashboard/kpis')
-      .then((res) => res.json())
-      .then((data) => setKpiData(data))
-      .catch(() => setError('Could not load KPI data.'));
+    const fetchKpis = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8001/api/v1/dashboard/kpis');
+        if (!response.ok) {
+          throw new Error('Failed to fetch KPI data');
+        }
+        const data = await response.json();
+        setKpiData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchKpis();
   }, []);
+
+  if (loading) {
+    return <SkeletonCard />;
+  }
 
   if (error) {
     return (
       <Card>
         <CardContent>
-          <Typography color="error">{error}</Typography>
+          <Alert severity="error">{error}</Alert>
         </CardContent>
       </Card>
     );
   }
 
   if (!kpiData) {
-    return (
-      <Card>
-        <CardContent>
-          <Typography>Loading KPIs...</Typography>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   return (

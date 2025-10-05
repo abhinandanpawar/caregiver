@@ -37,7 +37,11 @@ app = FastAPI(
 # --- CORS Middleware ---
 # This allows the React dashboard (running on a different port) to communicate with the API.
 origins = [
-    "http://localhost:8080", # The management dashboard is served from the same port as the agent UI
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173", # Personal Dashboard
+    "http://127.0.0.1:5173",
+    "http://localhost:8080",
     "http://127.0.0.1:8080",
 ]
 

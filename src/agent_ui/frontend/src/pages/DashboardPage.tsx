@@ -1,9 +1,9 @@
-import { Typography, Paper, Grid, Button } from '@mui/material';
+import { Typography, Paper, Grid, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const HomePage = () => {
+const DashboardPage = () => {
   return (
-    <div>
+    <Box>
       <Typography variant="h4" sx={{ mt: 4, mb: 4 }}>
         Dashboard
       </Typography>
@@ -33,8 +33,8 @@ const HomePage = () => {
           </Paper>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 
-export default HomePage;
+export default DashboardPage;
