@@ -1,31 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Typography, TextField, Button, List, ListItem, ListItemText, IconButton, CircularProgress, Alert } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SkeletonLoader from './SkeletonLoader';
 
-// This is a placeholder for the full Goals component implementation.
-// I will build this out with functionality to add, view, and delete goals.
+interface Goal {
+    id: number;
+    text: string;
+}
 
 const Goals = () => {
-    const [goals, setGoals] = useState([]);
+    const [goals, setGoals] = useState<Goal[]>([]);
     const [newGoal, setNewGoal] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Placeholder for fetching data from the backend API
     useEffect(() => {
-        // fetch('/api/goals').then(res => res.json()).then(data => setGoals(data.goals));
-        console.log("Fetching goals data...");
+        fetch('/api/goals')
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Failed to fetch goals');
+                }
+                return res.json();
+            })
+            .then(data => {
+                setGoals(data.goals);
+                setLoading(false);
+            })
+            .catch(err => {
+                setError(err.message);
+                setLoading(false);
+            });
     }, []);
 
     const handleAddGoal = () => {
         if (newGoal.trim() === '') return;
-        // Logic to add a new goal via API will be implemented here
-        console.log(`Adding new goal: ${newGoal}`);
-        setNewGoal('');
+
+        fetch('/api/goals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: newGoal }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            setGoals([...goals, data]);
+            setNewGoal('');
+        })
+        .catch(err => setError(err.message));
     };
 
-    const handleDeleteGoal = (id) => {
-        // Logic to delete a goal via API will be implemented here
-        console.log(`Deleting goal with id: ${id}`);
+    const handleDeleteGoal = (id: number) => {
+        fetch(`/api/goals/${id}`, { method: 'DELETE' })
+            .then(() => {
+                setGoals(goals.filter(goal => goal.id !== id));
+            })
+            .catch(err => setError(err.message));
     };
+
+    if (loading) return <SkeletonLoader />;
+    if (error) return <Alert severity="error">{error}</Alert>;
 
     return (
         <Box>
@@ -41,13 +73,14 @@ const Goals = () => {
                 <Button variant="contained" onClick={handleAddGoal} sx={{ ml: 2 }}>Add</Button>
             </Box>
             <List>
-                {/* Goals will be rendered here */}
-                <ListItem>
-                    <ListItemText primary="This is a sample goal." />
-                    <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                    </IconButton>
-                </ListItem>
+                {goals.map((goal) => (
+                    <ListItem key={goal.id}>
+                        <ListItemText primary={goal.text} />
+                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteGoal(goal.id)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </ListItem>
+                ))}
             </List>
         </Box>
     );

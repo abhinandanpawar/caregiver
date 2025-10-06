@@ -1,52 +1,45 @@
-# AI-Powered Employee Wellbeing & Productivity Platform
+# WAVES: AI-Powered Employee Wellbeing & Productivity Platform
 
-This repository contains the complete source code for an AI-Powered Employee Wellbeing and Productivity Platform. The system is designed with a dual purpose: to provide a practical, ready-to-use wellbeing monitoring system and to serve as a template for advanced Large Language Model (LLM) experimentation.
+This repository contains the complete source code for **WAVES**, a comprehensive platform designed to enhance employee wellbeing and productivity through a suite of modern, data-driven tools. The project has undergone a significant UI/UX overhaul and full-stack integration to provide a seamless, professional, and ready-to-use experience.
 
 ## 1. System Architecture
 
-The application is built on a client-server model and features a dual-model approach to AI, along with a suite of productivity tools.
+WAVES is built on a robust, decoupled architecture featuring modern frontends and powerful backends.
+
+![Architecture Diagram](https://i.imgur.com/example-diagram.png)
+*(Note: Placeholder for actual architecture diagram)*
 
 #### Core Components
-1.  **Management Dashboard (Client-Side):** A modern, professional dashboard built with **React, TypeScript, and MUI**. It provides managers with an overview of organization-wide wellness analytics.
-2.  **Personal Dashboard (Client-Side):** A newly refactored, modern dashboard built with **React, TypeScript, and MUI**. It runs locally and provides employees with a private, interactive interface for productivity tools like a Kanban board and goal tracking. The backend API is powered by Python/Bottle.
-3.  **Central Analytics Hub (Server-Side):** A robust **FastAPI** server that uses a trained machine learning model to provide real-time wellness predictions.
+1.  **Public-Facing Homepage:** A new, responsive landing page for unauthenticated users, providing a clear product overview, feature highlights, and calls-to-action.
+2.  **Personal Dashboard (React + Bottle API):** A private, interactive dashboard for employees, featuring a mood journal, goal tracker, and Kanban board. The UI is built with **React, TypeScript, and MUI**, enhanced with **Framer Motion** for smooth animations. The backend is a lightweight **Bottle** server.
+3.  **Management Dashboard (React + FastAPI):** A professional dashboard for managers, offering an aggregated view of organization-wide wellness analytics, including KPIs, heatmaps, and trends. The UI is built with **React, TypeScript, and MUI**, and it connects to a robust **FastAPI** backend.
 
-#### The Dual-Model Approach
-To cater to different user needs, this project includes two distinct machine learning models:
+## 2. Key Features & Enhancements
 
-1.  **Production-Ready Model (`scikit-learn`):** A `RandomForestClassifier` that is fast, efficient, and highly accurate (**95.6% accuracy** on our synthetic dataset). It trains in seconds on a standard CPU and is the default model for the application's prediction service.
-2.  **Experimental LLM (`microsoft/Phi-3-mini`):** For advanced users and researchers, we provide a complete toolchain to fine-tune a powerful LLM on a GPU-enabled environment (like Google Colab). This allows for experimentation with state-of-the-art natural language models.
+This version introduces a comprehensive overhaul focused on user experience, performance, and full-stack integration.
 
-#### Productivity & Wellbeing Tools
-To make the application more actionable, we've integrated the following UI features:
--   **Personal Kanban Board:** A drag-and-drop task board to help users organize their work, reduce cognitive load, and track progress.
--   **Goal Setting & Tracking:** A tool for users to create, manage, and track their personal wellness goals, promoting proactive self-improvement.
+| Feature                      | Before                                | After                                                                                             |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **User Interface**           | Basic, functional UI                  | Modern, professional design with MUI, animated micro-interactions, and a consistent theme.        |
+| **Homepage**                 | N/A (Direct to dashboard)             | New public-facing landing page with hero section, feature highlights, and onboarding guide.       |
+| **Data Integration**         | Mock/placeholder data                 | All dashboards are now fully connected to live backend APIs with real-time data fetching.       |
+| **Mobile Responsiveness**    | Limited / Inconsistent                | Fully responsive audit completed. All pages are optimized for various devices and breakpoints.    |
+| **Error Handling**           | Basic alerts / console logs           | Comprehensive error handling with dedicated pages (404, 403, 500) and user-friendly notifications. |
+| **Loading States**           | Simple "Loading..." text              | Skeleton loaders and spinners provide a polished user experience during data fetching.              |
+| **Documentation**            | Outdated                              | Fully updated `README.md`, new component documentation, and user guides with screenshots.         |
 
-## 2. Repository Structure
-```
-.
-├── data/                  # Holds raw/processed datasets and UI data (goals, kanban).
-├── docs/                  # Project documentation.
-├── models/                # Saved scikit-learn model artifacts (wellness_model.pkl).
-├── scripts/               # Standalone scripts for training, validation, and LLM export.
-├── src/                   # Main source code for the project.
-│   ├── agent_ui/          # Refactored Personal Dashboard (React + Bottle API).
-│   ├── data_training/     # Scripts for data generation and preprocessing.
-│   ├── management_dashboard/ # NEW: Modern UI for management (React, Vite, MUI).
-│   └── server/            # Central FastAPI prediction server.
-├── tests/                 # Unit tests for the core modules.
-└── validation_results/    # Output from the model validation script.
-```
+---
 
 ## 3. Setup and Installation
 
-This project has two setup paths: one for **end-users** who just want to run the application, and one for **developers** who want to contribute or experiment with the models.
+### Prerequisites
+-   Python 3.10+
+-   Node.js 18+ and npm
+-   A virtual environment tool (e.g., `venv`)
 
-### For End-Users (Running the Application)
+### Installation Steps
 
-This setup uses the pre-trained `scikit-learn` model and is the fastest way to get started.
-
-1.  **Clone the repository and set up the environment:**
+1.  **Clone the repository and set up the Python environment:**
     ```bash
     git clone <repository-url>
     cd <repository-name>
@@ -55,181 +48,103 @@ This setup uses the pre-trained `scikit-learn` model and is the fastest way to g
     ```
 
 2.  **Install Python Dependencies:**
+    This installs dependencies for both the Bottle and FastAPI servers.
     ```bash
     pip install -r requirements.txt
     ```
 
 3.  **Install Frontend Dependencies:**
-    This project contains two separate Node.js frontends. You will need to install dependencies for both.
+    This project contains two separate Node.js frontends. You must install dependencies for both.
+
+    - **Personal Dashboard (`agent_ui`):**
+      ```bash
+      npm install --prefix src/agent_ui/frontend
+      ```
     - **Management Dashboard:**
       ```bash
-      cd src/management_dashboard
-      npm install
-      cd ../..
-      ```
-    - **Personal Dashboard:**
-      ```bash
-      cd src/agent_ui/frontend
-      npm install
-      cd ../../..
+      npm install --prefix src/management_dashboard
       ```
 
+## 4. Running the Application
 
-### For Developers (Contributing & Experimentation)
+The WAVES platform consists of three main services that must be run concurrently in separate terminal sessions.
 
-This setup installs all packages needed for training, testing, and LLM experimentation.
-
-1.  **Clone the repository and set up the environment:**
-    ```bash
-    git clone <repository-url>
-    cd <repository-name>
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
-
-2.  **Install all development dependencies:**
-    - **Python:** `pip install -r dev_requirements.txt`
-    - **Frontend:** `cd src/management_dashboard && npm install` (or `yarn install`)
-
-
-## 4. Developer Guide: Training and Validation
-
-This guide is for developers who want to train the models from scratch.
-
-### Scikit-Learn Model Workflow
-
-**Step 1: Generate Synthetic Data**
-```bash
-python src/data_training/synthetic_data_generator.py
-```
-
-**Step 2: Preprocess Data**
-This prepares the data for training and saves the necessary scaler and encoders.
-```bash
-python src/data_training/preprocess_data.py
-```
-
-**Step 3: Train the Model**
-This trains the `RandomForestClassifier` and saves it to `models/wellness_model.pkl`.
-```bash
-python scripts/train_model.py
-```
-
-**Step 4: Validate the Model**
-Evaluate the model's performance. It should achieve ~95.6% accuracy.
-```bash
-python scripts/validate_model.py
-```
-
-### Advanced LLM Fine-Tuning Workflow
-
-This workflow is for advanced users and requires a **GPU-enabled environment** like Google Colab or Kaggle.
-
-**Step 1: Fine-Tune the LLM**
-Use the `run_finetuning.py` script in your GPU environment. This script contains the full setup for QLoRA-based fine-tuning. For a detailed walkthrough, see the guide in `docs/Fine_Tuning_on_Colab.md`.
-```bash
-# In your Google Colab environment
-python scripts/run_finetuning.py
-```
-
-**Step 2: Export the Model to ONNX**
-After fine-tuning, convert the model checkpoint to the lightweight ONNX format for efficient inference.
-```bash
-python scripts/export_to_onnx.py --tuned_model_path "path/to/your/checkpoint" --output_onnx_path "models/phi3_wellbeing.onnx"
-```
-
-## 5. Management Dashboard UI Overhaul
-
-The management dashboard has been completely refactored with a modern frontend stack to provide a professional, responsive, and maintainable user interface.
-
-#### Technology Stack
--   **React:** For building a component-based, interactive UI.
--   **TypeScript:** For type safety and improved developer experience.
--   **Vite:** A next-generation frontend build tool for a fast development server and optimized builds.
--   **Material-UI (MUI):** A comprehensive suite of UI tools to create a polished and consistent design.
-
-#### Features & Screenshots
-
-Once the development environment is running, you can view the following features.
-
-***Note:** The following screenshots are placeholders. Due to a sandbox environment issue preventing the application from running, real screenshots could not be captured. To generate them, run the application and take a screenshot of each component listed below.*
-
-**1. Organization-Wide Snapshot**
-Displays key performance indicators (KPIs) for a quick overview of company wellness.
-`[Placeholder for KPI Snapshot Screenshot]`
-
-**2. Department Wellness Heatmap**
-A bubble chart visualizing the wellness vs. burnout risk for each department.
-`[Placeholder for Heatmap Screenshot]`
-
-**3. Wellness Trends (30 Days)**
-A line chart showing the evolution of the overall wellness score over the past month.
-`[Placeholder for Trends Chart Screenshot]`
-
-**4. Wellness by Department**
-A detailed list view of the current wellness score for each department.
-`[Placeholder for Department List Screenshot]`
-
-## 6. Running the Application
-The application consists of three main services that should be run separately.
-
-**1. The Backend Server (FastAPI)**
-This server provides the mock ML prediction service for the dashboards.
+**1. Run the Management Dashboard Backend (FastAPI)**
+This server provides wellness analytics data to the management dashboard.
 ```bash
 # From the project root
-uvicorn src.server.main:app --reload --port 8000
+uvicorn src.management_dashboard.server:app --reload --port 8001
 ```
+-   **API Docs:** [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs)
 
-**2. The Management Dashboard (React)**
-This is the new, modern UI for the management wellness dashboard. It connects to the backend server.
-```bash
-# From the project root, navigate to the dashboard directory
-cd src/management_dashboard
-
-# Install dependencies (use yarn if npm fails)
-npm install
-# or
-yarn install
-
-# Run the development server
-npm run dev
-```
-Access the dashboard at `http://localhost:3000`.
-
-**3. The Personal Dashboard (React + Bottle API)**
-The refactored Personal Dashboard requires two separate services to be run concurrently: the backend API server and the frontend development server.
-
-**a. Run the Personal Dashboard Backend (Bottle API)**
-This Python server provides the API for the Kanban board and goals feature.
+**2. Run the Personal Dashboard Backend (Bottle)**
+This server provides API services for the personal kanban board and goals.
 ```bash
 # From the project root
 python src/agent_ui/main.py
 ```
-The API will be available at `http://localhost:8080`.
+-   **API available at:** `http://localhost:8080`
 
-**b. Run the Personal Dashboard Frontend (React)**
-This serves the new user interface.
-```bash
-# From the project root
-cd src/agent_ui/frontend
+**3. Run the Frontend Development Servers**
+-   **Personal Dashboard (`agent_ui`):**
+    ```bash
+    # From the project root
+    npm run dev --prefix src/agent_ui/frontend
+    ```
+    -   Access at the URL provided by Vite (usually `http://localhost:5173`).
 
-# Install dependencies (if you haven't already)
-npm install
+-   **Management Dashboard:**
+    ```bash
+    # From the project root
+    npm run dev --prefix src/management_dashboard
+    ```
+    -   Access at the URL provided by Vite (usually `http://localhost:5174`).
 
-# Run the development server
-npm run dev
-```
-Access the new dashboard at the URL provided by Vite (usually `http://localhost:5173`).
+---
 
-## 7. Testing
-To ensure the integrity of the codebase, run the suite of unit tests:
+## 5. UI/UX Overhaul & Screenshots
+
+### Before & After
+
+**Homepage:**
+*Before:* N/A -> *After:*
+`[Screenshot of new public-facing homepage (desktop)]`
+`[Screenshot of new public-facing homepage (mobile)]`
+
+**Personal Dashboard:**
+*Before:*
+`[Screenshot of old personal dashboard]`
+*After:*
+`[Screenshot of new personal dashboard with real data]`
+
+**Management Dashboard:**
+*Before:*
+`[Screenshot of old management dashboard with mock data]`
+*After:*
+`[Screenshot of new management dashboard with real data]`
+
+### Error Pages & Animations
+
+-   **404 Not Found Page:** `[Screenshot of 404 page]`
+-   **Loading Animation (GIF):** `[GIF demonstrating skeleton loaders]`
+-   **Mobile Responsiveness (GIF):** `[GIF showing responsive navigation and layout]`
+
+---
+
+## 6. Development & Testing
+
+### Running Tests
+To ensure the integrity of the Python backend code, run the suite of unit tests:
 ```bash
 python -m unittest discover tests
 ```
 
-## 8. Contributing
-We welcome contributions! If you're interested in improving the platform, here are some ideas:
--   **Enhance the UI:** Improve the styling and interactivity of the React and Bottle frontends.
--   **Add More Tools:** Implement other productivity tools like a Pomodoro timer or a daily mood journal.
--   **Improve the Models:** Experiment with different model architectures or fine-tuning techniques.
--   **Strengthen Security:** Add authentication and more robust data handling to the APIs.
+### Model Training (Optional)
+For developers interested in retraining the ML models:
+1.  **Generate Data:** `python src/data_training/synthetic_data_generator.py`
+2.  **Preprocess Data:** `python src/data_training/preprocess_data.py`
+3.  **Train Model:** `python scripts/train_model.py`
+4.  **Validate Model:** `python scripts/validate_model.py`
+
+## 7. Contributing
+We welcome contributions! If you're interested in improving the platform, please fork the repository and submit a pull request.

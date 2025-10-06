@@ -17,6 +17,7 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
 SETTINGS_FILE = os.path.join(DATA_PATH, 'settings.json')
 KANBAN_DATA_FILE = os.path.join(DATA_PATH, 'kanban_board.json')
 GOALS_DATA_FILE = os.path.join(DATA_PATH, 'goals.json')
+MOOD_JOURNAL_FILE = os.path.join(DATA_PATH, 'mood_journal.json')
 
 
 # --- Data Helper Functions ---
@@ -123,6 +124,33 @@ def delete_goal(goal_id):
 
     save_json_data(GOALS_DATA_FILE, goals_data)
     return {"status": "success"}
+
+# --- Mood Journal API ---
+@route('/api/mood-journal', method='GET')
+def get_mood_entries():
+    """API endpoint to fetch all mood journal entries."""
+    response.content_type = 'application/json'
+    return load_json_data(MOOD_JOURNAL_FILE, {"entries": []})
+
+@route('/api/mood-journal', method='POST')
+def add_mood_entry():
+    """API endpoint to add a new mood journal entry."""
+    data = request.json
+    if not data or 'mood' not in data or 'notes' not in data:
+        response.status = 400
+        return {"status": "error", "message": "Payload must include 'mood' and 'notes'."}
+
+    journal_data = load_json_data(MOOD_JOURNAL_FILE, {"entries": []})
+    new_entry = {
+        "id": f"entry-{int(time.time())}",
+        "mood": data['mood'],
+        "notes": data['notes'],
+        "timestamp": time.time()
+    }
+    journal_data['entries'].append(new_entry)
+    save_json_data(MOOD_JOURNAL_FILE, journal_data)
+    response.status = 201
+    return new_entry
 
 # --- SPA Catch-all Route ---
 # This route serves the main index.html for any non-API, non-asset request.

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, Alert, Box } from '@mui/material';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,8 +10,10 @@ import {
   Tooltip,
   Filler,
   Legend,
+  ChartData,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import SkeletonCard from './SkeletonCard';
 
 ChartJS.register(
   CategoryScale,
@@ -24,14 +26,24 @@ ChartJS.register(
   Legend
 );
 
+interface TrendsDataPoint {
+  date: string;
+  score: number;
+}
+
 const TrendsCard = () => {
-  const [chartData, setChartData] = useState(null);
-  const [error, setError] = useState(null);
+  const [chartData, setChartData] = useState<ChartData<'line'> | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/v1/dashboard/trends')
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchTrendsData = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8001/api/v1/dashboard/trends');
+        if (!response.ok) {
+          throw new Error('Failed to fetch trends data');
+        }
+        const data: TrendsDataPoint[] = await response.json();
         const labels = data.map((d) => new Date(d.date).toLocaleDateString());
         const scores = data.map((d) => d.score);
         setChartData({
@@ -47,8 +59,14 @@ const TrendsCard = () => {
             },
           ],
         });
-      })
-      .catch(() => setError('Error fetching trends data.'));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrendsData();
   }, []);
 
   const options = {
@@ -66,17 +84,20 @@ const TrendsCard = () => {
     },
   };
 
+  if (loading) {
+    return <SkeletonCard />;
+  }
+
   return (
     <Card>
       <CardContent>
         <Typography variant="h5" component="div" gutterBottom>
           Wellness Trends (30 Days)
         </Typography>
-        <div style={{ height: '300px' }}>
-            {error && <Typography color="error">{error}</Typography>}
-            {!error && !chartData && <Typography>Loading chart...</Typography>}
-            {!error && chartData && <Line options={options} data={chartData} />}
-        </div>
+        <Box sx={{ height: '300px' }}>
+          {error && <Alert severity="error">{error}</Alert>}
+          {!error && chartData && <Line options={options} data={chartData} />}
+        </Box>
       </CardContent>
     </Card>
   );
