@@ -93,8 +93,20 @@ def predict_wellness(input_data: PredictionInput):
 
     try:
         # 1. Convert input to a DataFrame and preprocess
-        input_df = pd.DataFrame([input_data.dict()])
-        input_df['department'] = ARTIFACTS['department_encoder'].transform(input_df['department'])
+        input_df = pd.DataFrame([input_data.model_dump()]) # Using .model_dump() to avoid deprecated .dict()
+
+        # Convert department to lowercase for case-insensitive matching
+        input_df['department'] = input_df['department'].str.lower()
+
+        try:
+            input_df['department'] = ARTIFACTS['department_encoder'].transform(input_df['department'])
+        except ValueError:
+            # Handle cases where the department is not in the encoder
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid department provided: The department '{input_data.department}' is not recognized by the system."
+            )
+
         numerical_cols = input_df.columns.drop('department')
         input_df[numerical_cols] = ARTIFACTS['scaler'].transform(input_df[numerical_cols])
 
@@ -114,8 +126,12 @@ def predict_wellness(input_data: PredictionInput):
             "recommended_resources": resources
         }
 
+    except HTTPException as exc:
+        # Re-raise custom HTTP exceptions to avoid being caught by the generic one
+        raise exc
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"An error occurred during prediction: {e}")
+        # Catch any other unexpected errors
+        raise HTTPException(status_code=500, detail=f"An internal server error occurred: {e}")
 
 # --- Mock Dashboard Data Models ---
 class KPI(BaseModel):

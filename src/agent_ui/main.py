@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import uuid
 from bottle import route, run, static_file, request, response
 
 # --- Configuration ---
@@ -79,7 +80,7 @@ def add_goal():
 
     goals_data = load_json_data(GOALS_DATA_FILE, {"goals": []})
     new_goal = {
-        "id": f"goal-{int(time.time())}",
+        "id": f"goal-{uuid.uuid4()}",
         "content": data['content'],
         "status": "active"
     }
@@ -142,7 +143,7 @@ def add_mood_entry():
 
     journal_data = load_json_data(MOOD_JOURNAL_FILE, {"entries": []})
     new_entry = {
-        "id": f"entry-{int(time.time())}",
+        "id": f"entry-{uuid.uuid4()}",
         "mood": data['mood'],
         "notes": data['notes'],
         "timestamp": time.time()
