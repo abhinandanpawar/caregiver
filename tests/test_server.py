@@ -51,5 +51,25 @@ class TestServer(unittest.TestCase):
         # This test case serves as a placeholder for more complex failure-state testing.
         pass
 
+    def test_predict_endpoint_invalid_department(self):
+        """Test the /predict endpoint with a department not seen during training."""
+        payload = {
+            "focus_session_length_minutes": 30,
+            "break_frequency_per_hour": 1,
+            "after_hours_activity_minutes": 15,
+            "communication_sentiment_score": 0.8,
+            "department": "Finance"  # Assuming 'Finance' is not a trained department
+        }
+
+        response = self.client.post("/predict", json=payload)
+
+        # This should fail before the fix, returning a generic 400 or 500 error.
+        # After the fix, it should return a 400 with a specific message.
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertIn("detail", data)
+        self.assertIn("Invalid department provided", data["detail"])
+
+
 if __name__ == '__main__':
     unittest.main()
