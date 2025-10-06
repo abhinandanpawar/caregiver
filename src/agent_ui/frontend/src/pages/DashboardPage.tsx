@@ -1,5 +1,6 @@
 import { Typography, Paper, Grid, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
+import Announcements from '../components/Announcements';
 
 const DashboardPage = () => {
   return (
@@ -8,6 +9,9 @@ const DashboardPage = () => {
         Dashboard
       </Typography>
       <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Announcements />
+        </Grid>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6">Daily Mood Journal</Typography>
