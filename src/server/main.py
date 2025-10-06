@@ -94,6 +94,10 @@ def predict_wellness(input_data: PredictionInput):
     try:
         # 1. Convert input to a DataFrame and preprocess
         input_df = pd.DataFrame([input_data.model_dump()]) # Using .model_dump() to avoid deprecated .dict()
+
+        # Convert department to lowercase for case-insensitive matching
+        input_df['department'] = input_df['department'].str.lower()
+
         try:
             input_df['department'] = ARTIFACTS['department_encoder'].transform(input_df['department'])
         except ValueError:

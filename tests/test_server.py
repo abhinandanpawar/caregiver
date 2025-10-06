@@ -70,6 +70,24 @@ class TestServer(unittest.TestCase):
         self.assertIn("detail", data)
         self.assertIn("Invalid department provided", data["detail"])
 
+    def test_predict_endpoint_case_insensitive_department(self):
+        """Test the /predict endpoint with a department name in a different case."""
+        # This payload is similar to test_predict_endpoint_success, but with "Sales" instead of "sales"
+        payload = {
+            "focus_session_length_minutes": 35,
+            "break_frequency_per_hour": 0.5,
+            "after_hours_activity_minutes": 60,
+            "communication_sentiment_score": 0.5,
+            "department": "Sales"
+        }
+
+        response = self.client.post("/predict", json=payload)
+
+        # Check for a successful response, which should now pass due to case-insensitivity
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["wellness_label"], "Stressed")
+
 
 if __name__ == '__main__':
     unittest.main()
