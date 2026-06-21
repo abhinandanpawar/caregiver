@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, List, ListItem, ListItemText, IconButton, CircularProgress, Alert } from '@mui/material';
+import { Box, Typography, TextField, Button, List, ListItem, ListItemText, IconButton, Alert, Checkbox } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SkeletonLoader from './SkeletonLoader';
 
 interface Goal {
-    id: number;
-    text: string;
+    id: string;
+    content: string;
+    status: string;
 }
 
 const Goals = () => {
@@ -38,7 +39,7 @@ const Goals = () => {
         fetch('/api/goals', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: newGoal }),
+            body: JSON.stringify({ content: newGoal }),
         })
         .then(res => res.json())
         .then(data => {
@@ -48,13 +49,29 @@ const Goals = () => {
         .catch(err => setError(err.message));
     };
 
-    const handleDeleteGoal = (id: number) => {
+    const handleDeleteGoal = (id: string) => {
         fetch(`/api/goals/${id}`, { method: 'DELETE' })
             .then(() => {
                 setGoals(goals.filter(goal => goal.id !== id));
             })
             .catch(err => setError(err.message));
     };
+
+    const handleToggleStatus = (id: string, currentStatus: string) => {
+        const newStatus = currentStatus === 'active' ? 'completed' : 'active';
+        fetch(`/api/goals/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus }),
+        })
+        .then(() => {
+            setGoals(goals.map(goal =>
+                goal.id === id ? { ...goal, status: newStatus } : goal
+            ));
+        })
+        .catch(err => setError(err.message));
+    };
+
 
     if (loading) return <SkeletonLoader />;
     if (error) return <Alert severity="error">{error}</Alert>;
@@ -68,14 +85,27 @@ const Goals = () => {
                     variant="outlined"
                     value={newGoal}
                     onChange={(e) => setNewGoal(e.target.value)}
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') handleAddGoal();
+                    }}
                     fullWidth
                 />
                 <Button variant="contained" onClick={handleAddGoal} sx={{ ml: 2 }}>Add</Button>
             </Box>
             <List>
                 {goals.map((goal) => (
-                    <ListItem key={goal.id}>
-                        <ListItemText primary={goal.text} />
+                    <ListItem key={goal.id} disablePadding sx={{ py: 1 }}>
+                        <Checkbox
+                            checked={goal.status === 'completed'}
+                            onChange={() => handleToggleStatus(goal.id, goal.status)}
+                        />
+                        <ListItemText
+                            primary={goal.content}
+                            sx={{
+                                textDecoration: goal.status === 'completed' ? 'line-through' : 'none',
+                                color: goal.status === 'completed' ? 'text.secondary' : 'text.primary'
+                            }}
+                        />
                         <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteGoal(goal.id)}>
                             <DeleteIcon />
                         </IconButton>
