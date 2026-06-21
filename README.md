@@ -11,7 +11,7 @@ WAVES is built on a robust, decoupled architecture featuring modern frontends an
 
 #### Core Components
 1.  **Public-Facing Homepage:** A new, responsive landing page for unauthenticated users, providing a clear product overview, feature highlights, and calls-to-action.
-2.  **Personal Dashboard (React + Bottle API):** A private, interactive dashboard for employees, featuring a mood journal, goal tracker, and Kanban board. The UI is built with **React, TypeScript, and MUI**, enhanced with **Framer Motion** for smooth animations. The backend is a lightweight **Bottle** server.
+2.  **Personal Dashboard (React + Bottle API):** A private, interactive dashboard for employees, featuring a mood journal, goal tracker, and Kanban board. The UI is built with **React, TypeScript, and MUI**, enhanced with **Framer Motion** for smooth animations and `@dnd-kit` for drag-and-drop capabilities. The backend is a lightweight **Bottle** server.
 3.  **Management Dashboard (React + FastAPI):** A professional dashboard for managers, offering an aggregated view of organization-wide wellness analytics, including KPIs, heatmaps, and trends. The UI is built with **React, TypeScript, and MUI**, and it connects to a robust **FastAPI** backend.
 
 ## 2. Key Features & Enhancements

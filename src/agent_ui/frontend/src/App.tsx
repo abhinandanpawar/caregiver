@@ -14,6 +14,7 @@ import LandingPage from './pages/LandingPage';
 import NotFoundPage from './pages/NotFoundPage';
 import FeedbackPage from './pages/FeedbackPage';
 import FormFillPage from './pages/FormFillPage';
+import KanbanPage from './pages/KanbanPage';
 
 // Placeholder components for the remaining pages
 const DataTransparency = () => <Typography variant="h4" sx={{ mt: 4 }}>Data Transparency</Typography>;
@@ -37,6 +38,7 @@ const AppContent = () => {
     { title: 'Dashboard', path: '/dashboard' },
     { title: 'Mood Journal', path: '/mood-journal' },
     { title: 'Goals', path: '/goals' },
+    { title: 'Kanban Board', path: '/kanban' },
     { title: 'Feedback', path: '/feedback' },
     { title: 'Data Transparency', path: '/data-transparency' },
     { title: 'Settings', path: '/settings' },
@@ -109,6 +111,7 @@ const AppContent = () => {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/mood-journal" element={<MoodJournalPage />} />
               <Route path="/goals" element={<GoalsPage />} />
+              <Route path="/kanban" element={<KanbanPage />} />
               <Route path="/feedback" element={<FeedbackPage />} />
               <Route path="/forms/:formId" element={<FormFillPage />} />
               <Route path="/data-transparency" element={<DataTransparency />} />
